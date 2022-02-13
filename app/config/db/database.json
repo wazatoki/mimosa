@@ -1,0 +1,26 @@
+{
+    "dev": {
+        "driver": "pg",
+        "user": "brewing_support",
+        "password": "brewing_support",
+        "host": "brewing_support_db",
+        "database": "brewing_supportdb",
+        "port": "5432"
+      },
+      "test": {
+        "driver": "pg",
+        "user": "brewing_support",
+        "password": "brewing_support",
+        "host": "brewing_support_db",
+        "database": "brewing_supportdb",
+        "port": "5432"
+      },
+      "prod": {
+        "driver": "pg",
+        "user": "brewing_support",
+        "password": "brewing_support",
+        "host": "brewing_support_db",
+        "database": "brewing_supportdb",
+        "port": "5432"
+      }
+  }
