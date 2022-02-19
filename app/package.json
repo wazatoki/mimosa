@@ -3,10 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "jest"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
+    "date-utils": "^1.2.21",
     "db-migrate": "^0.11.13",
     "db-migrate-pg": "^1.2.2",
     "debug": "~2.6.9",
@@ -14,5 +16,11 @@
     "morgan": "~1.9.1",
     "pg-promise": "^10.11.1",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
+    "babel-jest": "^27.5.1",
+    "jest": "^27.5.1"
   }
 }

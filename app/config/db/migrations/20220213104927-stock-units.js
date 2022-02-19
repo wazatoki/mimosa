@@ -17,8 +17,13 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   return db.createTable('stock_units', {
     id: { type: 'string', primaryKey: true },
+    del: {type: 'boolean', default: false},
+    created_at: 'timestamp',
+    created_by: 'string',
+    operated_at: 'timestamp',
+    operated_by: 'string',
     name: 'string',
-    conversionFactor: 'real'
+    conversion_factor: 'real'
   });
 };
 

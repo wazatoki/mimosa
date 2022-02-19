@@ -17,6 +17,11 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   return db.createTable('stock_items', {
     id: { type: 'string', primaryKey: true },
+    del: {type: 'boolean', default: false},
+    created_at: 'timestamp',
+    created_by: 'string',
+    operated_at: 'timestamp',
+    operated_by: 'string',
     name: 'string',
     receiving_unit_id: 'string',
     shipping_unit_id: 'string',

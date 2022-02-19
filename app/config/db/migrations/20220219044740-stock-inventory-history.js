@@ -15,24 +15,22 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  return db.createTable('stock_logs', {
+  return db.createTable('tock_inventory_history', {
     id: { type: 'string', primaryKey: true },
     del: {type: 'boolean', default: false},
     created_at: 'timestamp',
     created_by: 'string',
     operated_at: 'timestamp',
-    operated_by: 'string', 
-    act_date: 'date',
+    operated_by: 'string',
     item_id: 'string',
-    receiving_quantity: 'decimal',
-    shipping_quantity: 'decimal',
-    description: 'string'
+    quantity: 'decimal'
   });
 };
 
 exports.down = function(db) {
-  return db.dropTable('stock_logs');
+  return db.dropTable('tock_inventory_history');
 };
+
 
 exports._meta = {
   "version": 1

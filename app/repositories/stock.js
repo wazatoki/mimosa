@@ -1,26 +1,18 @@
-import {pgp} from 'pg-promise'
 import { createUUID } from '../utils/string'
 
-export class StockRepository {
+export function insert(stockLog, con) {
 
-    db
+    var params
+    params = {
+        id: createUUID(),
+        act_date: stockLog.actDate,
+        item_id: stockLog.item.id,
+        receiving_quantity: stockLog.receivingQuantity,
+        shipping_quantity: stockLog.shippingQuantity,
+        description: stockLog.description
+    };
 
-    insert(stockLog){
+    con.none('insert into stock_logs(${this:name}) values(${this:csv})', params);
 
-        var params
-        params = {id: createUUID(), 
-            act_date: stockLog.actDate,
-            item_id: stockLog.item.id,
-            receiving_quantity: stockLog.receivingQuantity,
-            shipping_quantity: stockLog.shippingQuantity,
-            description: stockLog.description};
-
-        this.db.none('insert into stock_logs(${this:name}) values(${this:csv})', params);
-        
-        return params.id
-    }
-
-    constructor(){
-        this.db = pgp('postgres://brewing_support:brewing_support@brewing_support_db:5432/brewing_supportdb')
-    }
+    return params.id
 }
