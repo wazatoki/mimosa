@@ -1,14 +1,14 @@
 import { StockItem } from "./master"
 
 export class Inventory {
-    ID
+    id
     actDate
     item
     quantity
 }
 
 export class StockLogEntity {
-    ID
+    id
     actDate
     item
     receivingQuantity

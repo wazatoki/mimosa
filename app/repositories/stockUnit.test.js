@@ -22,8 +22,8 @@ test("stockUnit insert", async () => {
     const id = await insert(stockUnit, "test_staff_id_1");
     const result = await one('select name, conversion_factor from stock_units where id=$1', id);
 
-    expect(result.name).toBe(stockUnit.name);
-    expect(result.conversion_factor).toBe(stockUnit.conversionFactor);
+    expect(stockUnit.name).toBe(result.name);
+    expect(stockUnit.conversionFactor).toBe(result.conversion_factor);
 
 });
 
@@ -51,8 +51,8 @@ test("stockUnit update", async () => {
     await update(stockUnit, "test_staff_id_2");
     const result = await one('select name, conversion_factor from stock_units where id=$1', id);
 
-    expect(result.name).toBe(stockUnit.name);
-    expect(result.conversion_factor).toBe(stockUnit.conversionFactor);
+    expect(stockUnit.name).toBe(result.name);
+    expect(stockUnit.conversionFactor).toBe(result.conversion_factor);
 
 });
 
@@ -74,7 +74,7 @@ test("stockUnit remove", async () => {
     await remove(id, "test_staff_id_2");
     const result = await one('select count(*) from stock_units where del=false and id=$1', id);
 
-    expect(result.count).toBe("0");
+    expect(0).toBe(Number(result.count));
 });
 
 test("stockUnit selectAll", async () => {
