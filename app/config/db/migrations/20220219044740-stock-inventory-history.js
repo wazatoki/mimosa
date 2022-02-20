@@ -17,7 +17,7 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   return db.createTable('tock_inventory_history', {
     id: { type: 'string', primaryKey: true },
-    del: {type: 'boolean', default: false},
+    del: {type: 'boolean', defaultValue: false},
     created_at: 'timestamp',
     created_by: 'string',
     operated_at: 'timestamp',

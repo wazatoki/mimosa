@@ -1,8 +1,7 @@
 import { createUUID } from '../utils/string';
 import  'date-utils';
-import { none } from './db';
-
-
+import { manyOrNone, none } from './db';
+import { StockUnit } from '../domains/master'
 
 export async function insert(stockUnit, ope_staff_id) {
 
@@ -47,4 +46,15 @@ export async function remove(id, ope_staff_id) {
 
     await none('update stock_units '
         + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where id=$(id)', params);
+}
+
+export async function selectAll(){
+    var result = await manyOrNone('select id, name, conversion_factor from stock_units where del=false');
+    return result.map(data => {
+        const su = new StockUnit();
+        su.id = data.id;
+        su.name = data.name;
+        su.conversionFactor = data.conversion_factor;
+        return su;
+    });
 }
