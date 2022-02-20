@@ -49,7 +49,7 @@ export async function remove(id, ope_staff_id) {
 }
 
 export async function selectAll(){
-    var result = await manyOrNone('select id, name, conversion_factor from stock_units where del=false');
+    const result = await manyOrNone('select id, name, conversion_factor from stock_units where del=false');
     return result.map(data => {
         const su = new StockUnit();
         su.id = data.id;

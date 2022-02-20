@@ -29,21 +29,17 @@ export class StockLog {
 
     inventoryResult(inventory, toDate) {
 
-        var receiving
-        var shipping
-        var result
-
-        receiving = this.stockLogs.filter(logEntity => (logEntity.item.name === inventory.item.name && logEntity.actDate > inventory.actDate && logEntity.actDate <= toDate))
+        const receiving = this.stockLogs.filter(logEntity => (logEntity.item.name === inventory.item.name && logEntity.actDate > inventory.actDate && logEntity.actDate <= toDate))
             .reduce(function (sum, element) {
                 return sum + element.receivingQuantity
             }, 0);
 
-        shipping = this.stockLogs.filter(logEntity => (logEntity.item.name === inventory.item.name && logEntity.actDate > inventory.actDate && logEntity.actDate <= toDate))
+        const shipping = this.stockLogs.filter(logEntity => (logEntity.item.name === inventory.item.name && logEntity.actDate > inventory.actDate && logEntity.actDate <= toDate))
             .reduce(function (sum, element) {
                 return sum + element.shippingQuantity
             }, 0);
 
-        result = (inventory.quantity
+        const result = (inventory.quantity
             + (receiving * inventory.item.receivingUnit.conversionFactor)
             - (shipping * inventory.item.shippigUnit.conversionFactor)) / item.stockUnit.conversionFactor
 
@@ -52,9 +48,7 @@ export class StockLog {
 
     receivingSum(item, fromDate, toDate) {
 
-        var result
-
-        result = this.stockLogs.filter(logEntity => (logEntity.item.name === item.name && logEntity.actDate > fromDate && logEntity.actDate <= toDate))
+        const result = this.stockLogs.filter(logEntity => (logEntity.item.name === item.name && logEntity.actDate > fromDate && logEntity.actDate <= toDate))
             .reduce(function (sum, element) {
                 return sum + element.receivingQuantity
             }, 0);
@@ -64,9 +58,7 @@ export class StockLog {
 
     shippingSum(item) {
 
-        var result
-
-        result = this.stockLogs.filter(logEntity => (logEntity.item.name === item.name && logEntity.actDate > fromDate && logEntity.actDate <= toDate))
+        const result = this.stockLogs.filter(logEntity => (logEntity.item.name === item.name && logEntity.actDate > fromDate && logEntity.actDate <= toDate))
             .reduce(function (sum, element) {
                 return sum + element.shippingQuantity
             }, 0);

@@ -2,8 +2,7 @@ import { createUUID } from '../utils/string'
 
 export function insert(stockLog, con) {
 
-    var params
-    params = {
+    const params = {
         id: createUUID(),
         act_date: stockLog.actDate,
         item_id: stockLog.item.id,
