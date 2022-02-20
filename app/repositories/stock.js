@@ -1,5 +1,7 @@
-import { createUUID } from '../utils/string'
-import { none } from './db';
+import { StockLogEntity } from '../domains/stock';
+import { createUUID } from '../utils/string';
+import { selectAll as selectAllItems } from './stockItem';
+import { manyOrNone, none } from './db';
 
 export async function insert(stockLogEntity, ope_staff_id) {
 
@@ -51,4 +53,22 @@ export async function remove(id, ope_staff_id) {
 
     await none('update stock_logs '
         + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where id=$(id)', params);
+}
+
+export async function selectAll(){
+    const result = await manyOrNone('select'
+        + 'id, act_date, item_id, receiving_quantity, shipping_quantity, description'
+        + 'from stock_logs where del=false');
+    const items = await selectAllItems();
+
+    return result.map(data => {
+        const s = new StockLogEntity();
+        s.id = data.id;
+        s.actDate = data.act_date;
+        s.item = items.find( item => data.item_id === item.id);
+        s.receivingQuantity = data.receiving_quantity;
+        s.shippingQuantity = data.shipping_quantity;
+        s.description = data.description;
+        return s;
+    });
 }

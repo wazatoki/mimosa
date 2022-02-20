@@ -1,5 +1,5 @@
 import { createUUID } from '../utils/string';
-import  'date-utils';
+import 'date-utils';
 import { manyOrNone, none } from './db';
 import { StockUnit } from '../domains/master'
 
@@ -21,7 +21,7 @@ export async function insert(stockUnit, ope_staff_id) {
 }
 
 export async function update(stockUnit, ope_staff_id) {
-    
+
     const params = {
         id: stockUnit.id,
         operated_at: new Date(),
@@ -36,7 +36,7 @@ export async function update(stockUnit, ope_staff_id) {
 }
 
 export async function remove(id, ope_staff_id) {
-    
+
     const params = {
         id: id,
         del: true,
@@ -48,7 +48,7 @@ export async function remove(id, ope_staff_id) {
         + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where id=$(id)', params);
 }
 
-export async function selectAll(){
+export async function selectAll() {
     const result = await manyOrNone('select id, name, conversion_factor from stock_units where del=false');
     return result.map(data => {
         const su = new StockUnit();

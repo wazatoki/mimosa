@@ -79,9 +79,7 @@ test("stockUnit remove", async () => {
 
 test("stockUnit selectAll", async () => {
 
-    await none('delete from stock_units')
-
-    const suarray = [];
+    const suArray = [];
     for(let i = 0; i < 10; i++){
 
         let params = {
@@ -98,12 +96,12 @@ test("stockUnit selectAll", async () => {
         su.id = params.id;
         su.name = params.name;
         su.conversionFactor = params.conversion_factor;
-        suarray.push(su);
+        suArray.push(su);
 
         await none('insert into stock_units(${this:name}) values(${this:csv})', params);
     }
 
     const result = await selectAll()
 
-    expect(suarray).toEqual(result);
+    expect(suArray).toEqual(result);
 });
