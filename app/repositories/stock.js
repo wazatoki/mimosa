@@ -56,8 +56,8 @@ export async function remove(id, ope_staff_id) {
 }
 
 export async function selectAll(){
-    const result = await manyOrNone('select'
-        + 'id, act_date, item_id, receiving_quantity, shipping_quantity, description'
+    const result = await manyOrNone('select '
+        + 'id, act_date, item_id, receiving_quantity, shipping_quantity, description '
         + 'from stock_logs where del=false');
     const items = await selectAllItems();
 
@@ -66,8 +66,8 @@ export async function selectAll(){
         s.id = data.id;
         s.actDate = data.act_date;
         s.item = items.find( item => data.item_id === item.id);
-        s.receivingQuantity = data.receiving_quantity;
-        s.shippingQuantity = data.shipping_quantity;
+        s.receivingQuantity = Number(data.receiving_quantity);
+        s.shippingQuantity = Number(data.shipping_quantity);
         s.description = data.description;
         return s;
     });

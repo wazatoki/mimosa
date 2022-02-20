@@ -1,8 +1,8 @@
-import { StockItem } from "../domains/master";
+import { StockItem, StockUnit } from "../domains/master";
 import { StockLogEntity } from "../domains/stock";
 import { createUUID } from "../utils/string";
 import { con, none, one } from "./db";
-import { insert, update, remove } from "./stock"
+import { insert, update, remove, selectAll } from "./stock"
 
 beforeEach( async () => {
     await none('delete from stock_logs');
@@ -94,4 +94,89 @@ test("stockLogs remove", async () => {
     const result = await one('select count(*) from stock_logs where del=false and id=$1', id);
 
     expect(0).toBe(Number(result.count));
+});
+
+test("stock selectAll", async () => {
+
+    const suArray = [];
+    for(let i = 0; i < 5; i++){
+
+        let params = {
+            id: createUUID(),
+            created_at: new Date(),
+            created_by: "test_staff_id_" + i,
+            operated_at: new Date(),
+            operated_by: "test_staff_id_" + i,
+            name: "test_name_" + i,
+            conversion_factor: i
+        };
+
+        let su = new StockUnit();
+        su.id = params.id;
+        su.name = params.name;
+        su.conversionFactor = params.conversion_factor;
+        suArray.push(su);
+
+        await none('insert into stock_units(${this:name}) values(${this:csv})', params);
+    }
+
+    const siArray = [];
+    for(let i = 0; i < 10; i++){
+
+        let params = {
+            id: createUUID(),
+            created_at: new Date(),
+            created_by: "test_staff_id_" + i,
+            operated_at: new Date(),
+            operated_by: "test_staff_id_" + i,
+            name: "test_name_" + i,
+            receiving_unit_id: suArray[(i + 3) % 5].id,
+            shipping_unit_id: suArray[(i + 2) % 5].id,
+            stock_unit_id: suArray[(i + 7) % 5].id,
+            base_unit_id: suArray[(i + 5) % 5].id
+        };
+
+        let si = new StockItem()
+        si.id = params.id;
+        si.name = params.name;
+        si.receivingUnit = suArray[(i + 3) % 5]
+        si.shippigUnit = suArray[(i + 2) % 5]
+        si.stockUnit = suArray[(i + 7) % 5]
+        si.baseUnit = suArray[(i + 5) % 5]
+        siArray.push(si);
+
+        await none('insert into stock_items(${this:name}) values(${this:csv})', params);
+    }
+
+    const sArray = [];
+    for(let i = 0; i < 10; i++){
+
+        let params = {
+            id: createUUID(),
+            created_at: new Date(),
+            created_by: "test_staff_id_" + i,
+            operated_at: new Date(),
+            operated_by: "test_staff_id_" + i,
+            act_date: new Date(2020,1,1),
+            item_id: siArray[(i + 7) % 8].id,
+            receiving_quantity: (i + 1) * 1.45,
+            shipping_quantity: (i + 1) * 2.75,
+            description: 'sample_comment_' + i
+        };
+
+        let s = new StockLogEntity()
+        s.id = params.id;
+        s.actDate = params.act_date;
+        s.item = siArray[(i + 7) % 8];
+        s.receivingQuantity = params.receiving_quantity;
+        s.shippingQuantity = params.shipping_quantity;
+        s.description = params.description;
+        sArray.push(s);
+
+        await none('insert into stock_logs(${this:name}) values(${this:csv})', params);
+    }
+
+    const result = await selectAll()
+
+    expect(sArray).toEqual(result);
 });
