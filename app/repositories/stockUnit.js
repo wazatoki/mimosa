@@ -54,7 +54,7 @@ export async function selectAll(){
         const su = new StockUnit();
         su.id = data.id;
         su.name = data.name;
-        su.conversionFactor = data.conversion_factor;
+        su.conversionFactor = Number(data.conversion_factor);
         return su;
     });
 }
