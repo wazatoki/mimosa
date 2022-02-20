@@ -1,0 +1,7 @@
+{
+    "db_host": "brewing_support_db",
+    "db_port": "5432",
+    "db_user": "brewing_support",
+    "db_pass": "brewing_support",
+    "db_name": "brewing_supportdb"
+}

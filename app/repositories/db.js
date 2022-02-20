@@ -1,7 +1,10 @@
 import pgPromise from 'pg-promise';
+import config from 'config'
 
 const pgp = pgPromise();
-export const con = pgp('postgres://brewing_support:brewing_support@brewing_support_db:5432/brewing_supportdb');
+const connectString = 'postgres://' + config.db_user + ':' + config.db_pass + '@' + config.db_host + ':' + config.db_port + '/' + config.db_name;
+
+export const con = pgp(connectString);
 
 export async function none(query, values) {
     await con.none(query, values);
