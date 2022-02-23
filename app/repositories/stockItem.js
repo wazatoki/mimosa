@@ -13,7 +13,7 @@ export async function insert(stockItem, ope_staff_id) {
         operated_by: ope_staff_id,
         name: stockItem.name,
         receiving_unit_id: stockItem.receivingUnit.id,
-        shipping_unit_id: stockItem.shippigUnit.id,
+        shipping_unit_id: stockItem.shippingUnit.id,
         stock_unit_id: stockItem.stockUnit.id,
         base_unit_id: stockItem.baseUnit.id
     };
@@ -31,7 +31,7 @@ export async function update(stockItem, ope_staff_id) {
         operated_by: ope_staff_id,
         name: stockItem.name,
         receiving_unit_id: stockItem.receivingUnit.id,
-        shipping_unit_id: stockItem.shippigUnit.id,
+        shipping_unit_id: stockItem.shippingUnit.id,
         stock_unit_id: stockItem.stockUnit.id,
         base_unit_id: stockItem.baseUnit.id
     };
@@ -69,7 +69,7 @@ export async function selectAll() {
         si.id = data.id;
         si.name = data.name;
         si.receivingUnit = stockUnits.find(unit => unit.id === data.receiving_unit_id);
-        si.shippigUnit = stockUnits.find(unit => unit.id === data.shipping_unit_id);
+        si.shippingUnit = stockUnits.find(unit => unit.id === data.shipping_unit_id);
         si.stockUnit = stockUnits.find(unit => unit.id === data.stock_unit_id);
         si.baseUnit = stockUnits.find(unit => unit.id === data.base_unit_id);
 

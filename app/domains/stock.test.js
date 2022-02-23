@@ -1,101 +1,146 @@
 import { Inventory, StockLog, StockLogEntity } from "./stock";
 import { createUUID } from "../utils/string";
-import { StockUnit, StockItem } from "./master";
 
-test("StockLog inventoryResult", async () => {
+test("StockLog filterStockLogs", () => {
+    const logs = createStockLogs();
+    const sl = new StockLog(logs);
+    const inventory = new Inventory(logs[0].item, new Date(2020, 1, 1));
+    inventory.quantity = 30;
+    const result = sl.filterStockLogs(inventory, new Date(2020, 1, 31));
+    const expected = [logs[3],logs[5],logs[4],logs[1]];
+    expect(result).toEqual(expected);
+});
+
+test("StockLog inventoryResult", () => {
     const logs = createStockLogs()
     const sl = new StockLog(logs);
     const inventory = new Inventory(logs[0].item, new Date(2020, 1, 1));
     inventory.quantity = 30
     const result = sl.inventoryResult(inventory, new Date(2020, 1, 31))
-    expect(result).toBe(54);
+    expect(result).toBe(50);
 });
 
-test("StockLog receivingSum", async () => {
+test("StockLog receivingSum", () => {
     const logs = createStockLogs()
     const sl = new StockLog(logs);
     const result = sl.receivingSum(logs[0].item, new Date(2020, 1, 1), new Date(2020, 1, 31))
     expect(result).toBe(40);
 });
 
-test("StockLog shippingSum", async () => {
+test("StockLog shippingSum", () => {
     const logs = createStockLogs()
     const sl = new StockLog(logs);
     const result = sl.shippingSum(logs[0].item, new Date(2020, 1, 1), new Date(2020, 1, 31))
-    expect(result).toBe(8);
+    expect(result).toBe(2);
 });
 
+function createStockUnits() {
+    return [{
+        id: createUUID(),
+        name: "test_name_1",
+        conversionFactor: 1
+    }, {
+        id: createUUID(),
+        name: "test_name_2",
+        conversionFactor: 10
+    }];
+}
+
+function createStockItems() {
+
+    const suArray = createStockUnits();
+    return [{
+        id: createUUID(),
+        name: "test_name_1",
+        receivingUnit: suArray[0],
+        shippingUnit: suArray[1],
+        stockUnit: suArray[0],
+        baseUnit: suArray[0]
+    }, {
+        id: createUUID(),
+        name: "test_name_2",
+        receivingUnit: suArray[0],
+        shippingUnit: suArray[1],
+        stockUnit: suArray[0],
+        baseUnit: suArray[0]
+    }, {
+        id: createUUID(),
+        name: "test_name_3",
+        receivingUnit: suArray[0],
+        shippingUnit: suArray[1],
+        stockUnit: suArray[1],
+        baseUnit: suArray[0]
+    }];
+}
+
 function createStockLogs() {
-    const suArray = [];
-    for (let i = 0; i < 5; i++) {
 
-        let params = {
-            id: createUUID(),
-            created_at: new Date(),
-            created_by: "test_staff_id_" + i,
-            operated_at: new Date(),
-            operated_by: "test_staff_id_" + i,
-            name: "test_name_" + i,
-            conversion_factor: i + 1
-        };
+    const siArray = createStockItems();
+    const sArray = [{
+        id: createUUID(),
+        actDate: new Date(2020, 1, 1),
+        item: siArray[0],
+        receivingQuantity: 10,
+        shippingQuantity: 0,
+        description: 'sample_comment_1',
+        type: 0
+    }, {
+        id: createUUID(),
+        actDate: new Date(2020, 1, 3),
+        item: siArray[0],
+        receivingQuantity: 10,
+        shippingQuantity: 0,
+        description: 'sample_comment_2',
+        type: 0
+    }, {
+        id: createUUID(),
+        actDate: new Date(2020, 1, 1),
+        item: siArray[0],
+        receivingQuantity: 0,
+        shippingQuantity: 1,
+        description: 'sample_comment_2',
+        type: 1
+    }, {
+        id: createUUID(),
+        actDate: new Date(2020, 1, 2),
+        item: siArray[0],
+        receivingQuantity: 10,
+        shippingQuantity: 0,
+        description: 'sample_comment_2',
+        type: 0
+    }, {
+        id: createUUID(),
+        actDate: new Date(2020, 1, 2),
+        item: siArray[0],
+        receivingQuantity: 0,
+        shippingQuantity: 1,
+        description: 'sample_comment_2',
+        type: 1
+    }, {
+        id: createUUID(),
+        actDate: new Date(2020, 1, 2),
+        item: siArray[0],
+        receivingQuantity: 10,
+        shippingQuantity: 0,
+        description: 'sample_comment_2',
+        type: 0
+    }, {
+        id: createUUID(),
+        actDate: new Date(2020, 1, 3),
+        item: siArray[1],
+        receivingQuantity: 10,
+        shippingQuantity: 0,
+        description: 'sample_comment_3',
+        type: 0
+    }, {
+        id: createUUID(),
+        actDate: new Date(2020, 1, 4),
+        item: siArray[2],
+        receivingQuantity: 10,
+        shippingQuantity: 0,
+        description: 'sample_comment_3',
+        type: 0
+    }];
 
-        let su = new StockUnit();
-        su.id = params.id;
-        su.name = params.name;
-        su.conversionFactor = params.conversion_factor;
-        suArray.push(su);
-    }
-
-    const siArray = [];
-    for (let i = 0; i < 10; i++) {
-
-        let params = {
-            id: createUUID(),
-            created_at: new Date(),
-            created_by: "test_staff_id_" + i,
-            operated_at: new Date(),
-            operated_by: "test_staff_id_" + i,
-            name: "test_name_" + i,
-            receiving_unit_id: suArray[0].id,
-            shipping_unit_id: suArray[1].id,
-            stock_unit_id: suArray[0].id,
-            base_unit_id: suArray[0].id
-        };
-
-        let si = new StockItem()
-        si.id = params.id;
-        si.name = params.name;
-        si.receivingUnit = suArray[0]
-        si.shippigUnit = suArray[1]
-        si.stockUnit = suArray[0]
-        si.baseUnit = suArray[0]
-        siArray.push(si);
-    }
-
-    const sArray = [];
-    for (let i = 0; i < 10; i++) {
-
-        let params = {
-            id: createUUID(),
-            created_at: new Date(),
-            created_by: "test_staff_id_" + i,
-            operated_at: new Date(),
-            operated_by: "test_staff_id_" + i,
-            act_date: new Date(2020, 1, i + 1),
-            item_id: siArray[(i + 7) % 8].id,
-            receiving_quantity: 10,
-            shipping_quantity: 2,
-            description: 'sample_comment_' + i
-        };
-
-        let s = new StockLogEntity()
-        s.id = params.id;
-        s.actDate = params.act_date;
-        s.item = siArray[(i + 7) % 2];
-        s.receivingQuantity = params.receiving_quantity;
-        s.shippingQuantity = params.shipping_quantity;
-        s.description = params.description;
-        sArray.push(s);
-    }
     return sArray;
 }
