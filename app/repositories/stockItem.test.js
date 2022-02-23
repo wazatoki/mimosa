@@ -147,5 +147,5 @@ test("stockItem selectAll", async () => {
 
     const result = await selectAll()
 
-    compare(siArray, result);
+    expect(siArray).toEqual(result);
 });

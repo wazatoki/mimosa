@@ -63,17 +63,17 @@ export class StockLog {
                 return sum + element.receivingQuantity
             }, 0);
 
-        return (result * item.receivingUnit.conversionFactor) / item.stockUnit.conversionFactor
+        return result
     }
 
-    shippingSum(item) {
+    shippingSum(item, fromDate, toDate) {
 
         const result = this.stockLogs.filter(logEntity => (logEntity.item.name === item.name && logEntity.actDate > fromDate && logEntity.actDate <= toDate))
             .reduce(function (sum, element) {
                 return sum + element.shippingQuantity
             }, 0);
 
-        return (result * item.shippigUnit.conversionFactor) / item.stockUnit.conversionFactor
+        return result
     }
 
     constructor(stockLogs) {

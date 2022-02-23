@@ -3,7 +3,29 @@ import { createUUID } from "../utils/string";
 import { StockUnit, StockItem } from "./master";
 
 test("StockLog inventoryResult", async () => {
+    const logs = createStockLogs()
+    const sl = new StockLog(logs);
+    const inventory = new Inventory(logs[0].item, new Date(2020, 1, 1));
+    inventory.quantity = 30
+    const result = sl.inventoryResult(inventory, new Date(2020, 1, 31))
+    expect(result).toBe(54);
+});
 
+test("StockLog receivingSum", async () => {
+    const logs = createStockLogs()
+    const sl = new StockLog(logs);
+    const result = sl.receivingSum(logs[0].item, new Date(2020, 1, 1), new Date(2020, 1, 31))
+    expect(result).toBe(40);
+});
+
+test("StockLog shippingSum", async () => {
+    const logs = createStockLogs()
+    const sl = new StockLog(logs);
+    const result = sl.shippingSum(logs[0].item, new Date(2020, 1, 1), new Date(2020, 1, 31))
+    expect(result).toBe(8);
+});
+
+function createStockLogs() {
     const suArray = [];
     for (let i = 0; i < 5; i++) {
 
@@ -75,13 +97,5 @@ test("StockLog inventoryResult", async () => {
         s.description = params.description;
         sArray.push(s);
     }
-
-    const sl = new StockLog(sArray);
-    const inventory = new Inventory(siArray[1], new Date(2020, 1, 1));
-    inventory.quantity = 30
-
-    const result = sl.inventoryResult(inventory, new Date(2020, 1, 31))
-
-    expect(result).toBe(54);
-
-});
+    return sArray;
+}

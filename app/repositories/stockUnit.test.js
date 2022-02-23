@@ -104,5 +104,5 @@ test("stockUnit selectAll", async () => {
 
     const result = await selectAll()
 
-    compare(suArray, result);
+    expect(suArray).toEqual(result);
 });

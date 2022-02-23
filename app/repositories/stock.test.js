@@ -176,5 +176,5 @@ test("stock selectAll", async () => {
     }
 
     const result = await selectAll()
-    compare(sArray, result);
+    expect(sArray).toEqual(result);
 });
