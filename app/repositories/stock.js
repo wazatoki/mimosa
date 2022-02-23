@@ -58,7 +58,8 @@ export async function remove(id, ope_staff_id) {
 export async function selectAll(){
     const result = await manyOrNone('select '
         + 'id, act_date, item_id, receiving_quantity, shipping_quantity, description '
-        + 'from stock_logs where del=false');
+        + 'from stock_logs where del=false '
+        + 'order by created_at');
     const items = await selectAllItems();
 
     return result.map(data => {

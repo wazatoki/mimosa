@@ -58,7 +58,8 @@ export async function remove(id, ope_staff_id) {
 export async function selectAll() {
 
     const result = await manyOrNone('select id, name, receiving_unit_id, shipping_unit_id, stock_unit_id, base_unit_id from '
-        + 'stock_items where del=false');
+        + 'stock_items where del=false '
+        + 'order by created_at');
 
     const stockUnits = await selectAllUnits();
 

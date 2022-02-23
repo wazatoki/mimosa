@@ -5,6 +5,13 @@ export class Inventory {
     actDate
     item
     quantity
+
+    constructor(item, dt) {
+        this.id = "";
+        this.actDate = dt || new Date("1970", "1", "1");
+        this.item = item || new StockItem();
+        this.quantity = 0;
+    }
 }
 
 export class StockLogEntity {
@@ -16,6 +23,7 @@ export class StockLogEntity {
     description
 
     constructor() {
+        this.id = ""
         this.actDate = new Date("1970", "1", "1")
         this.item = new StockItem()
         this.receivingQuantity = 0
@@ -29,19 +37,21 @@ export class StockLog {
 
     inventoryResult(inventory, toDate) {
 
-        const receiving = this.stockLogs.filter(logEntity => (logEntity.item.name === inventory.item.name && logEntity.actDate > inventory.actDate && logEntity.actDate <= toDate))
+        const receiving = this.stockLogs
+            .filter(logEntity => (logEntity.item.name === inventory.item.name && logEntity.actDate > inventory.actDate && logEntity.actDate <= toDate))
             .reduce(function (sum, element) {
                 return sum + element.receivingQuantity
             }, 0);
 
-        const shipping = this.stockLogs.filter(logEntity => (logEntity.item.name === inventory.item.name && logEntity.actDate > inventory.actDate && logEntity.actDate <= toDate))
+        const shipping = this.stockLogs
+            .filter(logEntity => (logEntity.item.name === inventory.item.name && logEntity.actDate > inventory.actDate && logEntity.actDate <= toDate))
             .reduce(function (sum, element) {
                 return sum + element.shippingQuantity
             }, 0);
 
-        const result = (inventory.quantity
-            + (receiving * inventory.item.receivingUnit.conversionFactor)
-            - (shipping * inventory.item.shippigUnit.conversionFactor)) / item.stockUnit.conversionFactor
+        const result = (inventory.quantity * inventory.item.stockUnit.conversionFactor
+            + receiving * inventory.item.receivingUnit.conversionFactor
+            - shipping * inventory.item.shippigUnit.conversionFactor) / inventory.item.stockUnit.conversionFactor
 
         return result
     }
