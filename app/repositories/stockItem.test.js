@@ -1,7 +1,8 @@
 import { StockItem, StockUnit } from "../domains/master";
+import { compare } from "../testUtils/testUtil";
 import { createUUID } from "../utils/string";
-import { con, none } from "./db";
-import { selectAll } from "./stockItem";
+import { con, none, one } from "./db";
+import { insert, selectAll } from "./stockItem";
 
 beforeEach( async () => {
     await none('delete from stock_items');
@@ -10,6 +11,30 @@ beforeEach( async () => {
 
 afterAll(() => {
     con.$pool.end();
+});
+
+test("stockItem insert", async () => {
+    
+    const stockItem = new StockItem();
+    stockItem.name = "test_name";
+    stockItem.receivingUnit = new StockUnit();
+    stockItem.receivingUnit.id= createUUID();
+    stockItem.shippigUnit = new StockUnit();
+    stockItem.shippigUnit.id= createUUID();
+    stockItem.stockUnit = new StockUnit();
+    stockItem.stockUnit.id= createUUID();
+    stockItem.baseUnit = new StockUnit();
+    stockItem.baseUnit.id= createUUID();
+
+    const id = await insert(stockItem, "test_staff_id_1");
+    const result = await one('select name, receiving_unit_id, shipping_unit_id, stock_unit_id, base_unit_id from stock_items where id=$1', id);
+
+    expect(stockItem.name).toBe(result.name);
+    expect(stockItem.receivingUnit.id).toBe(result.receiving_unit_id);
+    expect(stockItem.shippigUnit.id).toBe(result.shipping_unit_id);
+    expect(stockItem.stockUnit.id).toBe(result.stock_unit_id);
+    expect(stockItem.baseUnit.id).toBe(result.base_unit_id);
+
 });
 
 test("stockItem selectAll", async () => {
@@ -66,5 +91,5 @@ test("stockItem selectAll", async () => {
 
     const result = await selectAll()
 
-    expect(siArray).toEqual(result);
+    compare(siArray, result);
 });

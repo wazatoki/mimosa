@@ -1,5 +1,6 @@
 import { StockItem, StockUnit } from "../domains/master";
 import { StockLogEntity } from "../domains/stock";
+import { compare } from "../testUtils/testUtil";
 import { createUUID } from "../utils/string";
 import { con, none, one } from "./db";
 import { insert, update, remove, selectAll } from "./stock"
@@ -178,5 +179,5 @@ test("stock selectAll", async () => {
 
     const result = await selectAll()
 
-    expect(sArray).toEqual(result);
+    compare(sArray, result);
 });
