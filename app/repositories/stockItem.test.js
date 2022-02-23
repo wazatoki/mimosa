@@ -2,7 +2,7 @@ import { StockItem, StockUnit } from "../domains/master";
 import { compare } from "../testUtils/testUtil";
 import { createUUID } from "../utils/string";
 import { con, none, one } from "./db";
-import { insert, selectAll } from "./stockItem";
+import { insert, update, selectAll } from "./stockItem";
 
 beforeEach( async () => {
     await none('delete from stock_items');
@@ -35,6 +35,46 @@ test("stockItem insert", async () => {
     expect(stockItem.stockUnit.id).toBe(result.stock_unit_id);
     expect(stockItem.baseUnit.id).toBe(result.base_unit_id);
 
+});
+
+test("stockItem update", async () => {
+
+    const stockItem = new StockItem();
+    const id = createUUID();
+    const params = {
+        id: id,
+        created_at: new Date(),
+        created_by: "test_staff_id_1",
+        operated_at: new Date(),
+        operated_by: "test_staff_id_1",
+        name: "test_name",
+        receiving_unit_id: createUUID(),
+        shipping_unit_id: createUUID(),
+        stock_unit_id: createUUID(),
+        base_unit_id: createUUID()
+    };
+
+    await none('insert into stock_items(${this:name}) values(${this:csv})', params);
+
+    stockItem.id = id;
+    stockItem.name = "updated_test_name"
+    stockItem.receivingUnit = new StockUnit();
+    stockItem.receivingUnit.id= createUUID();
+    stockItem.shippigUnit = new StockUnit();
+    stockItem.shippigUnit.id= createUUID();
+    stockItem.stockUnit = new StockUnit();
+    stockItem.stockUnit.id= createUUID();
+    stockItem.baseUnit = new StockUnit();
+    stockItem.baseUnit.id= createUUID();
+    
+    await update(stockItem, "test_staff_id_2");
+    const result = await one('select name, receiving_unit_id, shipping_unit_id, stock_unit_id, base_unit_id from stock_items where id=$1', id);
+
+    expect(stockItem.name).toEqual(result.name);
+    expect(stockItem.receivingUnit.id).toBe(result.receiving_unit_id);
+    expect(stockItem.shippigUnit.id).toBe(result.shipping_unit_id);
+    expect(stockItem.stockUnit.id).toBe(result.stock_unit_id);
+    expect(stockItem.baseUnit.id).toBe(result.base_unit_id);
 });
 
 test("stockItem selectAll", async () => {

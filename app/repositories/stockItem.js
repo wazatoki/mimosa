@@ -26,19 +26,19 @@ export async function insert(stockItem, ope_staff_id) {
 export async function update(stockItem, ope_staff_id) {
     
     const params = {
-        id: stockLogEntity.id,
+        id: stockItem.id,
         operated_at: new Date(),
         operated_by: ope_staff_id,
         name: stockItem.name,
-        receiving_unit_id: receivingUnit.id,
-        shipping_unit_id: shippigUnit.id,
-        stock_unit_id: stockUnit,
-        base_unit_id: baseUnit
+        receiving_unit_id: stockItem.receivingUnit.id,
+        shipping_unit_id: stockItem.shippigUnit.id,
+        stock_unit_id: stockItem.stockUnit.id,
+        base_unit_id: stockItem.baseUnit.id
     };
 
     await none('update stock_items '
         + 'set operated_at=$(operated_at), operated_by=$(operated_by), name=$(name), receiving_unit_id=$(receiving_unit_id),'
-        + 'shipping_unit_id=$(shipping_unit_id), shipping_unit_id=$(shipping_unit_id), base_unit_id=$(base_unit_id)'
+        + 'shipping_unit_id=$(shipping_unit_id), stock_unit_id=$(stock_unit_id), base_unit_id=$(base_unit_id)'
         + 'where id=$(id)', params);
 }
 
