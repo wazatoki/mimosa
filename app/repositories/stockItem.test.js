@@ -2,7 +2,7 @@ import { StockItem, StockUnit } from "../domains/master";
 import { compare } from "../testUtils/testUtil";
 import { createUUID } from "../utils/string";
 import { con, none, one } from "./db";
-import { insert, update, selectAll } from "./stockItem";
+import { insert, update, remove, selectAll } from "./stockItem";
 
 beforeEach( async () => {
     await none('delete from stock_items');
@@ -75,6 +75,30 @@ test("stockItem update", async () => {
     expect(stockItem.shippigUnit.id).toBe(result.shipping_unit_id);
     expect(stockItem.stockUnit.id).toBe(result.stock_unit_id);
     expect(stockItem.baseUnit.id).toBe(result.base_unit_id);
+});
+
+test("stockItem remove", async () => {
+
+    const id = createUUID();
+    const params = {
+        id: id,
+        created_at: new Date(),
+        created_by: "test_staff_id_1",
+        operated_at: new Date(),
+        operated_by: "test_staff_id_1",
+        name: "test_name",
+        receiving_unit_id: createUUID(),
+        shipping_unit_id: createUUID(),
+        stock_unit_id: createUUID(),
+        base_unit_id: createUUID()
+    };
+
+    await none('insert into stock_items(${this:name}) values(${this:csv})', params);
+
+    await remove(id, "test_staff_id_2");
+    const result = await one('select count(*) from stock_items where del=false and id=$1', id);
+
+    expect(0).toBe(Number(result.count));
 });
 
 test("stockItem selectAll", async () => {
