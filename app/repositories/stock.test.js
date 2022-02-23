@@ -18,7 +18,6 @@ test("stockLogs insert", async () => {
     const stockLogEntity = new StockLogEntity()
 
     stockLogEntity.actDate = new Date(2020,1,1);
-    stockLogEntity.item = new StockItem();
     stockLogEntity.item.id = createUUID();
     stockLogEntity.receivingQuantity = 10.45;
     stockLogEntity.shippingQuantity = 0;
@@ -57,7 +56,6 @@ test("stockLogs update", async () => {
 
     stockLogEntity.id = id;
     stockLogEntity.actDate = new Date(2020,4,10),
-    stockLogEntity.item = new StockItem();
     stockLogEntity.item.id = params.item_id,
     stockLogEntity.receivingQuantity = 20.15,
     stockLogEntity.shippingQuantity = 30.35,

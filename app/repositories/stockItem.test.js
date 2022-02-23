@@ -17,13 +17,9 @@ test("stockItem insert", async () => {
     
     const stockItem = new StockItem();
     stockItem.name = "test_name";
-    stockItem.receivingUnit = new StockUnit();
     stockItem.receivingUnit.id= createUUID();
-    stockItem.shippigUnit = new StockUnit();
     stockItem.shippigUnit.id= createUUID();
-    stockItem.stockUnit = new StockUnit();
     stockItem.stockUnit.id= createUUID();
-    stockItem.baseUnit = new StockUnit();
     stockItem.baseUnit.id= createUUID();
 
     const id = await insert(stockItem, "test_staff_id_1");
@@ -58,13 +54,9 @@ test("stockItem update", async () => {
 
     stockItem.id = id;
     stockItem.name = "updated_test_name"
-    stockItem.receivingUnit = new StockUnit();
     stockItem.receivingUnit.id= createUUID();
-    stockItem.shippigUnit = new StockUnit();
     stockItem.shippigUnit.id= createUUID();
-    stockItem.stockUnit = new StockUnit();
     stockItem.stockUnit.id= createUUID();
-    stockItem.baseUnit = new StockUnit();
     stockItem.baseUnit.id= createUUID();
     
     await update(stockItem, "test_staff_id_2");
