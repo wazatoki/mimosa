@@ -46,3 +46,14 @@ export async function remove(id, ope_staff_id) {
     await none('update recipe '
         + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where id=$(id)', params);
 }
+
+export async function selectAll() {
+    const result = await manyOrNone('select id, name, act_date from recipe where del=false order by act_date');
+    return result.map(data => {
+        const r = new Recipe();
+        r.id = data.id;
+        r.name = data.name;
+        r.actDate = data.act_date;
+        return r;
+    });
+}
