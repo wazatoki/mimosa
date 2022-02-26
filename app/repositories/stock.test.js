@@ -160,7 +160,8 @@ test("stock selectAll", async () => {
             item_id: siArray[(i + 7) % 8].id,
             receiving_quantity: (i + 1) * 1.45,
             shipping_quantity: (i + 1) * 2.75,
-            description: 'sample_comment_' + i
+            description: 'sample_comment_' + i,
+            type: 0
         };
 
         let s = new StockLogEntity()

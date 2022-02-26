@@ -21,7 +21,7 @@ export class StockLogEntity {
     receivingQuantity
     shippingQuantity
     description
-    type
+    type // 0: recieving, 1: shipping
 
     constructor() {
         this.id = ""
@@ -30,7 +30,7 @@ export class StockLogEntity {
         this.receivingQuantity = 0
         this.shippingQuantity = 0
         this.description = ""
-        this.type = 1
+        this.type = 0
     };
 }
 

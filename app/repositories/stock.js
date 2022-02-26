@@ -15,7 +15,8 @@ export async function insert(stockLogEntity, ope_staff_id) {
         item_id: stockLogEntity.item.id,
         receiving_quantity: stockLogEntity.receivingQuantity,
         shipping_quantity: stockLogEntity.shippingQuantity,
-        description: stockLogEntity.description
+        description: stockLogEntity.description,
+        type: stockLogEntity.type
     };
 
     await none('insert into stock_logs(${this:name}) values(${this:csv})', params);
@@ -33,12 +34,14 @@ export async function update(stockLogEntity, ope_staff_id) {
         item_id: stockLogEntity.item.id,
         receiving_quantity: stockLogEntity.receivingQuantity,
         shipping_quantity: stockLogEntity.shippingQuantity,
-        description: stockLogEntity.description
+        description: stockLogEntity.description,
+        type: stockLogEntity.type
     };
 
     await none('update stock_logs '
         + 'set operated_at=$(operated_at), operated_by=$(operated_by), act_date=$(act_date), item_id=$(item_id),'
-        + 'receiving_quantity=$(receiving_quantity), shipping_quantity=$(shipping_quantity), description=$(description)'
+        + 'receiving_quantity=$(receiving_quantity), shipping_quantity=$(shipping_quantity), description=$(description),'
+        + 'type=${type}'
         + 'where id=$(id)', params);
 }
 
@@ -57,7 +60,7 @@ export async function remove(id, ope_staff_id) {
 
 export async function selectAll(){
     const result = await manyOrNone('select '
-        + 'id, act_date, item_id, receiving_quantity, shipping_quantity, description '
+        + 'id, act_date, item_id, receiving_quantity, shipping_quantity, description, type '
         + 'from stock_logs where del=false '
         + 'order by created_at');
     const items = await selectAllItems();
@@ -70,6 +73,7 @@ export async function selectAll(){
         s.receivingQuantity = Number(data.receiving_quantity);
         s.shippingQuantity = Number(data.shipping_quantity);
         s.description = data.description;
+        s.type = Number(data.type);
         return s;
     });
 }

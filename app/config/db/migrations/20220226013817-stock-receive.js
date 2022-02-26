@@ -15,26 +15,22 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  return db.createTable('stock_logs', {
+  return db.createTable('stock_receive', {
     id: { type: 'string', primaryKey: true },
     del: {type: 'boolean', defaultValue: false},
     created_at: 'timestamp',
     created_by: 'string',
     operated_at: 'timestamp',
     operated_by: 'string', 
-    act_date: 'date',
-    item_id: 'string',
-    receiving_quantity: 'decimal',
-    shipping_quantity: 'decimal',
-    description: 'string',
-    type: 'int', // 0: recieving, 1: shipping
-    recipe_id: 'string',
-    stock_receive_id: 'string'
+    name: 'string', //  取引先
+    slip_id: 'string', // 伝票NO
+    slip_date: 'date', // 伝票日付
+    picture_path: 'string'
   });
 };
 
 exports.down = function(db) {
-  return db.dropTable('stock_logs');
+  return db.dropTable('stock_receive');
 };
 
 exports._meta = {

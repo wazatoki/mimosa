@@ -1,9 +1,7 @@
 import { insert, remove, selectAll, update } from "./stockUnit";
 import { StockUnit } from "../domains/master";
 import { con, none, one } from "./db";
-import  'date-utils';
 import { createUUID } from '../utils/string';
-import { compare } from "../testUtils/testUtil";
 
 beforeEach( async () => {
     await none('delete from stock_units');
