@@ -33,3 +33,16 @@ export async function update(recipe, ope_staff_id) {
         + 'set operated_at=$(operated_at), operated_by=$(operated_by), name=$(name), act_date=$(act_date) '
         + 'where id=$(id)', params);
 }
+
+export async function remove(id, ope_staff_id) {
+
+    const params = {
+        id: id,
+        del: true,
+        operated_at: new Date(),
+        operated_by: ope_staff_id
+    };
+
+    await none('update recipe '
+        + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where id=$(id)', params);
+}
