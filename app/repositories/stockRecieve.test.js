@@ -77,3 +77,41 @@ test("stockReceive remove", async () => {
 
     expect(0).toBe(Number(result.count));
 });
+
+test("stockReceive selectAll", async () => {
+
+    const srArray = [];
+    for(let i = 0; i < 10; i++){
+
+        let params = {
+            id: createUUID(),
+            created_at: new Date(),
+            created_by: "test_staff_id_" + i,
+            operated_at: new Date(),
+            operated_by: "test_staff_id_" + i,
+            name: "test_name_" + i,
+            slip_id: 'test000' + i,
+            slip_date: new Date(2020,1,i),
+            picture_path: 'test_path_' + i
+        };
+
+        let sr = new StockRecieve(params.name, params.slip_id, params.slip_date, params.picture_path);
+        sr.id = params.id;
+        srArray.push(sr);
+
+        await none('insert into stock_receive(${this:name}) values(${this:csv})', params);
+    }
+
+    const result = await selectAll()
+
+    const sortedArray = srArray.sort( (a, b) => {
+        if (a.slipDate > b.slipDate){
+            return 1
+        }
+        if (a.slipDate < b.slipDate){
+            return -1
+        }
+        return 0
+    });
+    expect(result).toEqual(sortedArray);
+});

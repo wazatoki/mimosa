@@ -50,10 +50,8 @@ export async function remove(id, ope_staff_id) {
 export async function selectAll() {
     const result = await manyOrNone('select id, name, act_date from recipe where del=false order by act_date');
     return result.map(data => {
-        const r = new Recipe();
+        const r = new Recipe(data.name, data.act_date);
         r.id = data.id;
-        r.name = data.name;
-        r.actDate = data.act_date;
         return r;
     });
 }

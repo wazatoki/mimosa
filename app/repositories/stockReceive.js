@@ -53,3 +53,12 @@ export async function remove(id, ope_staff_id) {
     await none('update stock_receive '
         + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where id=$(id)', params);
 }
+
+export async function selectAll() {
+    const result = await manyOrNone('select id, name, slip_id, slip_date, picture_path from stock_receive where del=false order by slip_date');
+    return result.map(data => {
+        const sr = new StockRecieve(data.name, data.slip_id, data.slip_date, data.picture_path);
+        sr.id = data.id;
+        return sr;
+    });
+}
