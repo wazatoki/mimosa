@@ -40,3 +40,16 @@ export async function update(stockRecieve, ope_staff_id) {
         + 'slip_date=${slip_date}, picture_path=${picture_path} '
         + 'where id=$(id)', params);
 }
+
+export async function remove(id, ope_staff_id) {
+
+    const params = {
+        id: id,
+        del: true,
+        operated_at: new Date(),
+        operated_by: ope_staff_id
+    };
+
+    await none('update stock_receive '
+        + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where id=$(id)', params);
+}
