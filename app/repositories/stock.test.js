@@ -1,11 +1,12 @@
 import { StockItem, StockUnit } from "../domains/master";
 import { StockLogEntity } from "../domains/stock";
-import { compare } from "../testUtils/testUtil";
+import { Recipe } from "../domains/recipe";
+import { StockRecieve } from "../domains/stockReceive"
 import { createUUID } from "../utils/string";
 import { con, none, one } from "./db";
 import { insert, update, remove, selectAll } from "./stock"
 
-beforeEach( async () => {
+beforeEach(async () => {
     await none('delete from stock_logs');
 });
 
@@ -14,10 +15,10 @@ afterAll(() => {
 });
 
 test("stockLogs insert", async () => {
-    
+
     const stockLogEntity = new StockLogEntity()
 
-    stockLogEntity.actDate = new Date(2020,1,1);
+    stockLogEntity.actDate = new Date(2020, 1, 1);
     stockLogEntity.item.id = createUUID();
     stockLogEntity.receivingQuantity = 10.45;
     stockLogEntity.shippingQuantity = 0;
@@ -25,7 +26,7 @@ test("stockLogs insert", async () => {
 
     const id = await insert(stockLogEntity, "test_staff_id_1");
     const result = await one('select act_date, item_id, receiving_quantity, shipping_quantity, description from stock_logs where id=$1', id);
-    
+
     expect(stockLogEntity.actDate).toEqual(result.act_date);
     expect(stockLogEntity.item.id).toBe(result.item_id);
     expect(stockLogEntity.receivingQuantity).toBe(Number(result.receiving_quantity));
@@ -45,7 +46,7 @@ test("stockLogs update", async () => {
         created_by: "test_staff_id_1",
         operated_at: new Date(),
         operated_by: "test_staff_id_1",
-        act_date: new Date(2020,1,1),
+        act_date: new Date(2020, 1, 1),
         item_id: createUUID(),
         receiving_quantity: 10.45,
         shipping_quantity: 50.5,
@@ -55,11 +56,11 @@ test("stockLogs update", async () => {
     await none('insert into stock_logs(${this:name}) values(${this:csv})', params);
 
     stockLogEntity.id = id;
-    stockLogEntity.actDate = new Date(2020,4,10),
-    stockLogEntity.item.id = params.item_id,
-    stockLogEntity.receivingQuantity = 20.15,
-    stockLogEntity.shippingQuantity = 30.35,
-    stockLogEntity.description = 'sample_comment_1_1'
+    stockLogEntity.actDate = new Date(2020, 4, 10),
+        stockLogEntity.item.id = params.item_id,
+        stockLogEntity.receivingQuantity = 20.15,
+        stockLogEntity.shippingQuantity = 30.35,
+        stockLogEntity.description = 'sample_comment_1_1'
 
     await update(stockLogEntity, "test_staff_id_2");
     const result = await one('select act_date, item_id, receiving_quantity, shipping_quantity, description from stock_logs where id=$1', id);
@@ -80,7 +81,7 @@ test("stockLogs remove", async () => {
         created_by: "test_staff_id_1",
         operated_at: new Date(),
         operated_by: "test_staff_id_1",
-        act_date: new Date(2020,1,1),
+        act_date: new Date(2020, 1, 1),
         item_id: createUUID(),
         receiving_quantity: 10.45,
         shipping_quantity: 50.5,
@@ -97,8 +98,28 @@ test("stockLogs remove", async () => {
 
 test("stock selectAll", async () => {
 
+    const reArray = [];
+    for (let i = 0; i < 10; i++) {
+
+        let params = {
+            id: createUUID(),
+            created_at: new Date(),
+            created_by: "test_staff_id_" + i,
+            operated_at: new Date(),
+            operated_by: "test_staff_id_" + i,
+            name: "test_name_" + i,
+            act_date: new Date(2020, 1, i),
+        };
+
+        let re = new Recipe(params.name, params.act_date);
+        re.id = params.id;
+        reArray.push(re);
+
+        await none('insert into recipe(${this:name}) values(${this:csv})', params);
+    }
+
     const suArray = [];
-    for(let i = 0; i < 5; i++){
+    for (let i = 0; i < 5; i++) {
 
         let params = {
             id: createUUID(),
@@ -119,8 +140,30 @@ test("stock selectAll", async () => {
         await none('insert into stock_units(${this:name}) values(${this:csv})', params);
     }
 
+    const srArray = [];
+    for (let i = 0; i < 10; i++) {
+
+        let params = {
+            id: createUUID(),
+            created_at: new Date(),
+            created_by: "test_staff_id_" + i,
+            operated_at: new Date(),
+            operated_by: "test_staff_id_" + i,
+            name: "test_name_" + i,
+            slip_id: 'test000' + i,
+            slip_date: new Date(2020, 1, i),
+            picture_path: 'test_path_' + i
+        };
+
+        let sr = new StockRecieve(params.name, params.slip_id, params.slip_date, params.picture_path);
+        sr.id = params.id;
+        srArray.push(sr);
+
+        await none('insert into stock_receive(${this:name}) values(${this:csv})', params);
+    }
+
     const siArray = [];
-    for(let i = 0; i < 10; i++){
+    for (let i = 0; i < 10; i++) {
 
         let params = {
             id: createUUID(),
@@ -148,7 +191,7 @@ test("stock selectAll", async () => {
     }
 
     const sArray = [];
-    for(let i = 0; i < 10; i++){
+    for (let i = 0; i < 10; i++) {
 
         let params = {
             id: createUUID(),
@@ -156,12 +199,14 @@ test("stock selectAll", async () => {
             created_by: "test_staff_id_" + i,
             operated_at: new Date(),
             operated_by: "test_staff_id_" + i,
-            act_date: new Date(2020,1,1),
+            act_date: new Date(2020, 1, 1),
             item_id: siArray[(i + 7) % 8].id,
             receiving_quantity: (i + 1) * 1.45,
             shipping_quantity: (i + 1) * 2.75,
             description: 'sample_comment_' + i,
-            type: 0
+            type: 0,
+            recipe_id: reArray[1].id,
+            stock_receive_id: srArray[1].id
         };
 
         let s = new StockLogEntity()
@@ -171,6 +216,8 @@ test("stock selectAll", async () => {
         s.receivingQuantity = params.receiving_quantity;
         s.shippingQuantity = params.shipping_quantity;
         s.description = params.description;
+        s.recipe = reArray[1];
+        s.stockReceive = srArray[1];
         sArray.push(s);
 
         await none('insert into stock_logs(${this:name}) values(${this:csv})', params);

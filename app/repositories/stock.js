@@ -1,6 +1,8 @@
 import { StockLogEntity } from '../domains/stock';
 import { createUUID } from '../utils/string';
 import { selectAll as selectAllItems } from './stockItem';
+import { selectAll as selectAllRecipes } from './recipe'
+import { selectAll as selectAllStockReceives } from './stockReceive'
 import { manyOrNone, none } from './db';
 
 export async function insert(stockLogEntity, ope_staff_id) {
@@ -60,10 +62,12 @@ export async function remove(id, ope_staff_id) {
 
 export async function selectAll(){
     const result = await manyOrNone('select '
-        + 'id, act_date, item_id, receiving_quantity, shipping_quantity, description, type '
+        + 'id, act_date, item_id, receiving_quantity, shipping_quantity, description, type, recipe_id, stock_receive_id '
         + 'from stock_logs where del=false '
         + 'order by created_at');
     const items = await selectAllItems();
+    const stockRecieveList = await selectAllStockReceives();
+    const recipes = await selectAllRecipes();
 
     return result.map(data => {
         const s = new StockLogEntity();
@@ -74,6 +78,8 @@ export async function selectAll(){
         s.shippingQuantity = Number(data.shipping_quantity);
         s.description = data.description;
         s.type = Number(data.type);
+        s.stockReceive = stockRecieveList.find( item => data.stock_receive_id === item.id);
+        s.recipe = recipes.find( item => data.recipe_id === item.id);
         return s;
     });
 }

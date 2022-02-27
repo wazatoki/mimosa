@@ -22,6 +22,8 @@ export class StockLogEntity {
     shippingQuantity
     description
     type // 0: recieving, 1: shipping
+    stockReceive
+    recipe
 
     constructor() {
         this.id = ""
@@ -31,6 +33,8 @@ export class StockLogEntity {
         this.shippingQuantity = 0
         this.description = ""
         this.type = 0
+        this.stockReceiveList = [];
+        this.recipes = [];
     };
 }
 
