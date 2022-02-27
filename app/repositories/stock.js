@@ -18,7 +18,9 @@ export async function insert(stockLogEntity, ope_staff_id) {
         receiving_quantity: stockLogEntity.receivingQuantity,
         shipping_quantity: stockLogEntity.shippingQuantity,
         description: stockLogEntity.description,
-        type: stockLogEntity.type
+        type: stockLogEntity.type,
+        stock_receive_id: stockLogEntity.stockReceive.id,
+        recipe_id: stockLogEntity.recipe.id
     };
 
     await none('insert into stock_logs(${this:name}) values(${this:csv})', params);
@@ -37,7 +39,9 @@ export async function update(stockLogEntity, ope_staff_id) {
         receiving_quantity: stockLogEntity.receivingQuantity,
         shipping_quantity: stockLogEntity.shippingQuantity,
         description: stockLogEntity.description,
-        type: stockLogEntity.type
+        type: stockLogEntity.type,
+        stock_receive_id: stockLogEntity.stockReceive.id,
+        recipe_id: stockLogEntity.recipe.id
     };
 
     await none('update stock_logs '
