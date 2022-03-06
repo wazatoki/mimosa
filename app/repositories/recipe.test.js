@@ -1,5 +1,7 @@
 import { insert, remove, selectAll, update } from "./recipe";
 import { Recipe } from "../domains/recipe";
+import { StockLogEntity } from '../domains/stock'
+import { StockItem, StockUnit} from '../domains/master'
 import { con, none, one } from "./db";
 import { createUUID } from '../utils/string';
 
@@ -12,14 +14,44 @@ afterAll(() => {
 });
 
 test("recipe insert", async () => {
+
+    const su = new StockUnit();
+        su.id = 'test_unit_id';
+        su.name = 'test_unit_name_id';
+        su.conversionFactor = 1;
+
+    const si = new StockItem()
+        si.id = 'test_item_id_1';
+        si.name = 'test_item_name_1';
+        si.receivingUnit = su
+        si.shippingUnit = su
+        si.stockUnit = su
+        si.baseUnit = su
+
+    const stockLogEntity = new StockLogEntity()
+
+    stockLogEntity.actDate = new Date(2020, 1, 1);
+    stockLogEntity.item = si;
+    stockLogEntity.receivingQuantity = 0;
+    stockLogEntity.shippingQuantity = 50.5;
+    stockLogEntity.description = 'sample_comment_1';
+    stockLogEntity.type = 1;
     
-    const recipe = new Recipe("test_name", new Date(2020,1,1))
+    const recipe = new Recipe("test_name", new Date(2020,1,1));
+    recipe.stockLogs.push(stockLogEntity);
 
     const id = await insert(recipe, "test_staff_id_1");
     const result = await one('select name, act_date from recipe where id=$1', id);
+    const result1 = await one('select act_date, item_id, receiving_quantity, description, type from stock_logs where recipe_id=$1', id);
 
     expect(recipe.name).toBe(result.name);
     expect(recipe.actDate).toEqual(result.act_date);
+
+    expect(stockLogEntity.actDate).toEqual(result1.act_date);
+    expect(stockLogEntity.item.id).toBe(result1.item_id);
+    expect(stockLogEntity.receivingQuantity).toBe(Number(result1.receiving_quantity));
+    expect(stockLogEntity.description).toBe(result1.description);
+    expect(stockLogEntity.type).toBe(Number(result1.type));
 
 });
 
@@ -38,15 +70,57 @@ test("recipe update", async () => {
 
     await none('insert into recipe(${this:name}) values(${this:csv})', params);
 
+    for (let i = 0; i < 5; i++) {
+
+        const params = {
+            id: createUUID(),
+            created_at: new Date(),
+            created_by: "test_staff_id_1",
+            operated_at: new Date(),
+            operated_by: "test_staff_id_1",
+            act_date: new Date(2020, 1, i),
+            item_id: createUUID(),
+            receiving_quantity: 10.45,
+            shipping_quantity: 50.5,
+            description: 'sample_comment_'+i,
+            recipe_id: id
+        };
+        await none('insert into stock_logs(${this:name}) values(${this:csv})', params);
+    }
+
+    const su = new StockUnit();
+        su.id = 'test_unit_id';
+        su.name = 'test_unit_name_id';
+        su.conversionFactor = 1;
+
+    const si = new StockItem()
+        si.id = 'test_item_id_1';
+        si.name = 'test_item_name_1';
+        si.receivingUnit = su
+        si.shippingUnit = su
+        si.stockUnit = su
+        si.baseUnit = su
+
+    const stockLogEntity = new StockLogEntity()
+
     const recipe = new Recipe("test_name_2", new Date(2020,1,2))
     recipe.id = id
-
+    recipe.stockLogs.push(stockLogEntity);
 
     await update(recipe, "test_staff_id_2");
     const result = await one('select name, act_date from recipe where id=$1', id);
+    const result1 = await one('select act_date, item_id, receiving_quantity, description, type from stock_logs where del = false and recipe_id=$1', id);
+    const result2 = await one('select count(*) as count from stock_logs where del = false and recipe_id=$1', id);
 
     expect(recipe.name).toBe(result.name);
     expect(recipe.actDate).toEqual(result.act_date);
+
+    expect(stockLogEntity.actDate).toEqual(result1.act_date);
+    expect(stockLogEntity.item.id).toBe(result1.item_id);
+    expect(stockLogEntity.receivingQuantity).toBe(Number(result1.receiving_quantity));
+    expect(stockLogEntity.description).toBe(result1.description);
+    expect(stockLogEntity.type).toBe(Number(result1.type));
+    expect(1).toBe(Number(result2.count));
 
 });
 
@@ -65,10 +139,30 @@ test("recipe remove", async () => {
 
     await none('insert into recipe(${this:name}) values(${this:csv})', params);
 
+    for (let i = 0; i < 5; i++) {
+
+        const params = {
+            id: createUUID(),
+            created_at: new Date(),
+            created_by: "test_staff_id_1",
+            operated_at: new Date(),
+            operated_by: "test_staff_id_1",
+            act_date: new Date(2020, 1, i),
+            item_id: createUUID(),
+            receiving_quantity: 10.45,
+            shipping_quantity: 50.5,
+            description: 'sample_comment_'+i,
+            recipe_id: id
+        };
+        await none('insert into stock_logs(${this:name}) values(${this:csv})', params);
+    }
+
     await remove(id, "test_staff_id_2");
     const result = await one('select count(*) from recipe where del=false and id=$1', id);
+    const result1 = await one('select count(*) as count from stock_logs where del = false and recipe_id=$1', id);
 
     expect(0).toBe(Number(result.count));
+    expect(0).toBe(Number(result1.count));
 });
 
 test("recipe selectAll", async () => {

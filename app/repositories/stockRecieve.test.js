@@ -38,7 +38,6 @@ test("stockReceive insert", async () => {
     stockLogEntity.type = 0;
     
     const stockReceive = new StockRecieve("test_name", "test00001", new Date(2020,1,1), "test_path")
-
     stockReceive.stockLogs.push(stockLogEntity);
     const id = await insert(stockReceive, "test_staff_id_1");
     const result = await one('select name, slip_id, slip_date, picture_path from stock_receive where id=$1', id);
@@ -148,13 +147,32 @@ test("stockReceive remove", async () => {
         slip_date: new Date(2020,1,1),
         picture_path: 'test_path'
     };
-
     await none('insert into stock_receive(${this:name}) values(${this:csv})', params);
+
+    for (let i = 0; i < 5; i++) {
+
+        const params = {
+            id: createUUID(),
+            created_at: new Date(),
+            created_by: "test_staff_id_1",
+            operated_at: new Date(),
+            operated_by: "test_staff_id_1",
+            act_date: new Date(2020, 1, i),
+            item_id: createUUID(),
+            receiving_quantity: 10.45,
+            shipping_quantity: 50.5,
+            description: 'sample_comment_'+i,
+            stock_receive_id: id
+        };
+        await none('insert into stock_logs(${this:name}) values(${this:csv})', params);
+    }
 
     await remove(id, "test_staff_id_2");
     const result = await one('select count(*) from stock_receive where del=false and id=$1', id);
+    const result1 = await one('select count(*) as count from stock_logs where del = false and stock_receive_id=$1', id);
 
     expect(0).toBe(Number(result.count));
+    expect(0).toBe(Number(result1.count));
 });
 
 test("stockReceive selectAll", async () => {

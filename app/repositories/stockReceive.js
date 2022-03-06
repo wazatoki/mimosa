@@ -23,6 +23,7 @@ export async function insert(stockRecieve, ope_staff_id) {
 
     stockRecieve.stockLogs.forEach( async stocklog => {
 
+        stocklog.type = 0
         stocklog.stockReceive = stockRecieve;
         await stockInsert(stocklog, ope_staff_id);
 
@@ -54,6 +55,7 @@ export async function update(stockRecieve, ope_staff_id) {
 
     stockRecieve.stockLogs.forEach( async stocklog => {
 
+        stocklog.type = 0;
         stocklog.stockReceive = stockRecieve;
         await stockInsert(stocklog, ope_staff_id);
 
@@ -71,6 +73,8 @@ export async function remove(id, ope_staff_id) {
 
     await none('update stock_receive '
         + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where id=$(id)', params);
+
+    await removeByStockReceiveID(params.id, ope_staff_id)
 }
 
 export async function selectAll() {

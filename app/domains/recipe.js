@@ -4,9 +4,10 @@ export class Recipe {
     actDate
     stockLogs // 払い出し材料データ
 
-    constructor(name, actDate) {
+    constructor(name, actDate, stockLogs) {
         this.id = "";
         this.name = name;
         this.actDate = actDate || new Date("1970", "1", "1");
+        this.stockLogs = stockLogs || [];
     }
 };
