@@ -1,4 +1,6 @@
 import { StockItem } from "./master"
+import { StockRecieve } from './stockReceive'
+import { Recipe } from './recipe'
 
 export class Inventory {
     id
@@ -33,29 +35,29 @@ export class StockLogEntity {
         this.shippingQuantity = 0
         this.description = ""
         this.type = 0
-        this.stockReceiveList = [];
-        this.recipes = [];
+        this.stockReceive = new StockRecieve();
+        this.recipe = new Recipe();
     };
 }
 
 export class StockLog {
     stockLogs
 
-    filterStockLogs(inventory, toDate){
+    filterStockLogs(inventory, toDate) {
 
         return this.stockLogs
             .filter(logEntity => (logEntity.item.name === inventory.item.name && logEntity.actDate > inventory.actDate && logEntity.actDate <= toDate))
             .sort((a, b) => {
-                if(a.actDate > b.actDate){
+                if (a.actDate > b.actDate) {
                     return 1;
                 }
-                if(a.actDate < b.actDate){
+                if (a.actDate < b.actDate) {
                     return -1;
                 }
-                if(a.type > b.type){
+                if (a.type > b.type) {
                     return 1;
                 }
-                if(a.type < b.type){
+                if (a.type < b.type) {
                     return -1;
                 }
                 return 0

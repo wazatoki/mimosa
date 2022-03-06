@@ -1,5 +1,7 @@
 import { insert, remove, selectAll, update } from "./stockReceive";
 import { StockRecieve } from "../domains/stockReceive";
+import { StockLogEntity } from '../domains/stock'
+import { StockItem, StockUnit} from '../domains/master'
 import { con, none, one } from "./db";
 import { createUUID } from '../utils/string';
 
@@ -12,17 +14,46 @@ afterAll(() => {
 });
 
 test("stockReceive insert", async () => {
+
+    const su = new StockUnit();
+        su.id = 'test_unit_id';
+        su.name = 'test_unit_name_id';
+        su.conversionFactor = 1;
+
+    const si = new StockItem()
+        si.id = 'test_item_id_1';
+        si.name = 'test_item_name_1';
+        si.receivingUnit = su
+        si.shippingUnit = su
+        si.stockUnit = su
+        si.baseUnit = su
+
+    const stockLogEntity = new StockLogEntity()
+
+    stockLogEntity.actDate = new Date(2020, 1, 1);
+    stockLogEntity.item = si;
+    stockLogEntity.receivingQuantity = 10.45;
+    stockLogEntity.shippingQuantity = 0;
+    stockLogEntity.description = 'sample_comment_1';
+    stockLogEntity.type = 0;
     
     const stockReceive = new StockRecieve("test_name", "test00001", new Date(2020,1,1), "test_path")
 
+    stockReceive.stockLogs.push(stockLogEntity);
     const id = await insert(stockReceive, "test_staff_id_1");
     const result = await one('select name, slip_id, slip_date, picture_path from stock_receive where id=$1', id);
+    const result1 = await one('select act_date, item_id, receiving_quantity, description, type from stock_logs where stock_receive_id=$1', id);
 
     expect(stockReceive.name).toBe(result.name);
     expect(stockReceive.slipID).toEqual(result.slip_id);
     expect(stockReceive.slipDate).toEqual(result.slip_date);
     expect(stockReceive.picturePath).toEqual(result.picture_path);
 
+    expect(stockLogEntity.actDate).toEqual(result1.act_date);
+    expect(stockLogEntity.item.id).toBe(result1.item_id);
+    expect(stockLogEntity.receivingQuantity).toBe(Number(result1.receiving_quantity));
+    expect(stockLogEntity.description).toBe(result1.description);
+    expect(stockLogEntity.type).toBe(Number(result1.type));
 });
 
 test("stockReceive update", async () => {

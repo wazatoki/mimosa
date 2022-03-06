@@ -2,6 +2,7 @@ export class Recipe {
     id
     name
     actDate
+    stockLogs // 払い出し材料データ
 
     constructor(name, actDate) {
         this.id = "";

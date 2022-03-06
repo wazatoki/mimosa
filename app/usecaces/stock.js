@@ -1,7 +1,7 @@
 import { StockLog } from "../domains/stock"
 
-export function recieve(stockLog, repo) { 
-    const id = repo.insert(stockLog);
+export function recieve(stockRecieve, stockRecieveRepo, stockRepo) { 
+    stockRecieve.id = stockRecieveRepo.insert(stockRecieve);
 }
 
 export function ship(stockLog, repo) { 

@@ -1,6 +1,7 @@
 import { createUUID } from '../utils/string';
 import { manyOrNone, none } from './db';
 import { StockRecieve } from '../domains/stockReceive'
+import { insert as stockInsert } from './stock'
 
 export async function insert(stockRecieve, ope_staff_id) {
 
@@ -17,6 +18,15 @@ export async function insert(stockRecieve, ope_staff_id) {
     };
 
     await none('insert into stock_receive(${this:name}) values(${this:csv})', params);
+
+    stockRecieve.id = params.id;
+
+    stockRecieve.stockLogs.forEach( async stocklog => {
+
+        stocklog.stockReceive = stockRecieve;
+        await stockInsert(stocklog, ope_staff_id);
+
+    });
 
     return params.id
 }
