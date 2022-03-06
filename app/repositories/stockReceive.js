@@ -1,7 +1,7 @@
 import { createUUID } from '../utils/string';
 import { manyOrNone, none } from './db';
 import { StockRecieve } from '../domains/stockReceive'
-import { insert as stockInsert } from './stock'
+import { insert as stockInsert, removeByStockReceiveID } from './stock'
 
 export async function insert(stockRecieve, ope_staff_id) {
 
@@ -49,6 +49,15 @@ export async function update(stockRecieve, ope_staff_id) {
         + 'set operated_at=$(operated_at), operated_by=$(operated_by), name=$(name), slip_id=$(slip_id), '
         + 'slip_date=${slip_date}, picture_path=${picture_path} '
         + 'where id=$(id)', params);
+
+    await removeByStockReceiveID(params.id, ope_staff_id)
+
+    stockRecieve.stockLogs.forEach( async stocklog => {
+
+        stocklog.stockReceive = stockRecieve;
+        await stockInsert(stocklog, ope_staff_id);
+
+    });
 }
 
 export async function remove(id, ope_staff_id) {

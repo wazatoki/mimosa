@@ -64,6 +64,32 @@ export async function remove(id, ope_staff_id) {
         + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where id=$(id)', params);
 }
 
+export async function removeByStockReceiveID(stockReceiveID, ope_staff_id) {
+    
+    const params = {
+        stock_receive_id: stockReceiveID,
+        del: true,
+        operated_at: new Date(),
+        operated_by: ope_staff_id
+    };
+
+    await none('update stock_logs '
+        + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where stock_receive_id=$(stock_receive_id)', params);
+}
+
+export async function removeByRecipeID(recipeID, ope_staff_id) {
+    
+    const params = {
+        recipe_id: recipeID,
+        del: true,
+        operated_at: new Date(),
+        operated_by: ope_staff_id
+    };
+
+    await none('update stock_logs '
+        + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where recipe_id=$(recipe_id)', params);
+}
+
 export async function selectAll(){
     const result = await manyOrNone('select '
         + 'id, act_date, item_id, receiving_quantity, shipping_quantity, description, type, recipe_id, stock_receive_id '
