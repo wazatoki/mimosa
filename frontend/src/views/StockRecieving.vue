@@ -36,7 +36,6 @@
           <el-button type="primary" @click="onSubmit">Create</el-button>
           <el-button>Cancel</el-button>
         </el-form>
-        {{ recievingDataArray }}
       </el-main>
     </el-container>
   </div>

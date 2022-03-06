@@ -10,6 +10,7 @@
     "package": "rm -rf ../app/public && cp -r dist ../app/public"
   },
   "dependencies": {
+    "axios": "^0.26.0",
     "core-js": "^3.6.5",
     "element-plus": "^2.0.1",
     "uuid": "^8.3.2",
