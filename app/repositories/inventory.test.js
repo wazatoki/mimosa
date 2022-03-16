@@ -1,28 +1,31 @@
-import { insert, remove, selectAll, update } from "./inventory";
+import { InventoryRepo, insert, remove, selectAll, update } from "./inventory";
 import { Inventory } from "../domains/stock";
 import { StockUnit } from '../domains/master'
-import { con, none, one } from "./db";
+import * as db from "./db";
 import { createUUID } from '../utils/string';
 import { StockItem } from "../domains/master";
 
+const d = new db.DBbase(db.createConnection())
+
 beforeEach( async () => {
-    await none('delete from inventories');
-    await none('delete from stock_units');
-    await none('delete from stock_items');
+    await d.none('delete from inventories');
+    await d.none('delete from stock_units');
+    await d.none('delete from stock_items');
 });
 
 afterAll(() => {
-    con.$pool.end();
+    d.con.$pool.end();
 });
 
-test("inventories insert", async () => {
+test.only("inventories insert", async () => {
     
+    const inventoryRepo = new InventoryRepo(d);
     const siArray = await createTestData();
     const inventory = new Inventory(siArray[1], new Date(2020,1,1));
     inventory.id = createUUID();
 
-    const id = await insert(inventory, "test_staff_id_1");
-    const result = await one('select act_date, item_id, quantity from inventories where id=$1', id);
+    const id = await inventoryRepo.insert(inventory, "test_staff_id_1");
+    const result = await d.one('select act_date, item_id, quantity from inventories where id=$1', id);
 
     expect(inventory.actDate).toEqual(result.act_date);
     expect(inventory.item.id).toBe(result.item_id);
@@ -140,7 +143,7 @@ async function createTestData () {
         su.conversionFactor = params.conversion_factor;
         suArray.push(su);
 
-        await none('insert into stock_units(${this:name}) values(${this:csv})', params);
+        await d.none('insert into stock_units(${this:name}) values(${this:csv})', params);
     }
 
     const siArray = [];
@@ -168,7 +171,7 @@ async function createTestData () {
         si.baseUnit = suArray[(i + 5) % 5]
         siArray.push(si);
 
-        await none('insert into stock_items(${this:name}) values(${this:csv})', params);
+        await d.none('insert into stock_items(${this:name}) values(${this:csv})', params);
     }
     return siArray;
 }
