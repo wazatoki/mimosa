@@ -1,115 +1,129 @@
 import { StockLogEntity } from '../domains/stock';
 import { createUUID } from '../utils/string';
-import { selectAll as selectAllItems } from './stockItem';
-import { selectAll as selectAllRecipes } from './recipe'
-import { selectAll as selectAllStockReceives } from './stockReceive'
-import { manyOrNone, none } from './db';
+import { StockItemRepo } from './stockItem';
+import { RecipeRepo } from './recipe'
+import { StockRecieveRepo } from './stockRecieve'
 
-export async function insert(stockLogEntity, ope_staff_id) {
+export class StockRepo {
 
-    const params = {
-        id: createUUID(),
-        created_at: new Date(),
-        created_by: ope_staff_id,
-        operated_at: new Date(),
-        operated_by: ope_staff_id,
-        act_date: stockLogEntity.actDate,
-        item_id: stockLogEntity.item.id,
-        receiving_quantity: stockLogEntity.receivingQuantity,
-        shipping_quantity: stockLogEntity.shippingQuantity,
-        description: stockLogEntity.description,
-        type: stockLogEntity.type,
-        stock_receive_id: stockLogEntity.stockReceive.id,
-        recipe_id: stockLogEntity.recipe.id
-    };
+    dbBase;
 
-    await none('insert into stock_logs(${this:name}) values(${this:csv})', params);
+    async insert(stockLogEntity, ope_staff_id) {
 
-    return params.id
-}
-
-export async function update(stockLogEntity, ope_staff_id) {
+        const params = {
+            id: createUUID(),
+            created_at: new Date(),
+            created_by: ope_staff_id,
+            operated_at: new Date(),
+            operated_by: ope_staff_id,
+            act_date: stockLogEntity.actDate,
+            item_id: stockLogEntity.item.id,
+            receiving_quantity: stockLogEntity.receivingQuantity,
+            shipping_quantity: stockLogEntity.shippingQuantity,
+            description: stockLogEntity.description,
+            type: stockLogEntity.type,
+            stock_receive_id: stockLogEntity.stockReceive.id,
+            recipe_id: stockLogEntity.recipe.id
+        };
     
-    const params = {
-        id: stockLogEntity.id,
-        operated_at: new Date(),
-        operated_by: ope_staff_id,
-        act_date: stockLogEntity.actDate,
-        item_id: stockLogEntity.item.id,
-        receiving_quantity: stockLogEntity.receivingQuantity,
-        shipping_quantity: stockLogEntity.shippingQuantity,
-        description: stockLogEntity.description,
-        type: stockLogEntity.type,
-        stock_receive_id: stockLogEntity.stockReceive.id,
-        recipe_id: stockLogEntity.recipe.id
-    };
-
-    await none('update stock_logs '
-        + 'set operated_at=$(operated_at), operated_by=$(operated_by), act_date=$(act_date), item_id=$(item_id),'
-        + 'receiving_quantity=$(receiving_quantity), shipping_quantity=$(shipping_quantity), description=$(description),'
-        + 'type=${type}'
-        + 'where id=$(id)', params);
-}
-
-export async function remove(id, ope_staff_id) {
+        await this.dbBase.none('insert into stock_logs(${this:name}) values(${this:csv})', params);
     
-    const params = {
-        id: id,
-        del: true,
-        operated_at: new Date(),
-        operated_by: ope_staff_id
-    };
-
-    await none('update stock_logs '
-        + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where id=$(id)', params);
-}
-
-export async function removeByStockReceiveID(stockReceiveID, ope_staff_id) {
+        return params.id
+    }
     
-    const params = {
-        stock_receive_id: stockReceiveID,
-        del: true,
-        operated_at: new Date(),
-        operated_by: ope_staff_id
-    };
-
-    await none('update stock_logs '
-        + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where stock_receive_id=$(stock_receive_id)', params);
-}
-
-export async function removeByRecipeID(recipeID, ope_staff_id) {
+    async update(stockLogEntity, ope_staff_id) {
+        
+        const params = {
+            id: stockLogEntity.id,
+            operated_at: new Date(),
+            operated_by: ope_staff_id,
+            act_date: stockLogEntity.actDate,
+            item_id: stockLogEntity.item.id,
+            receiving_quantity: stockLogEntity.receivingQuantity,
+            shipping_quantity: stockLogEntity.shippingQuantity,
+            description: stockLogEntity.description,
+            type: stockLogEntity.type,
+            stock_receive_id: stockLogEntity.stockReceive.id,
+            recipe_id: stockLogEntity.recipe.id
+        };
     
-    const params = {
-        recipe_id: recipeID,
-        del: true,
-        operated_at: new Date(),
-        operated_by: ope_staff_id
-    };
+        await this.dbBase.none('update stock_logs '
+            + 'set operated_at=$(operated_at), operated_by=$(operated_by), act_date=$(act_date), item_id=$(item_id),'
+            + 'receiving_quantity=$(receiving_quantity), shipping_quantity=$(shipping_quantity), description=$(description),'
+            + 'type=${type}'
+            + 'where id=$(id)', params);
+    }
+    
+    async remove(id, ope_staff_id) {
+        
+        const params = {
+            id: id,
+            del: true,
+            operated_at: new Date(),
+            operated_by: ope_staff_id
+        };
+    
+        await this.dbBase.none('update stock_logs '
+            + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where id=$(id)', params);
+    }
+    
+    async removeByStockReceiveID(stockReceiveID, ope_staff_id) {
+        
+        const params = {
+            stock_receive_id: stockReceiveID,
+            del: true,
+            operated_at: new Date(),
+            operated_by: ope_staff_id
+        };
+    
+        await this.dbBase.none('update stock_logs '
+            + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where stock_receive_id=$(stock_receive_id)', params);
+    }
+    
+    async removeByRecipeID(recipeID, ope_staff_id) {
+        
+        const params = {
+            recipe_id: recipeID,
+            del: true,
+            operated_at: new Date(),
+            operated_by: ope_staff_id
+        };
+    
+        await this.dbBase.none('update stock_logs '
+            + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where recipe_id=$(recipe_id)', params);
+    }
+    
+    async selectAll(){
 
-    await none('update stock_logs '
-        + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where recipe_id=$(recipe_id)', params);
-}
+        const result = await this.dbBase.manyOrNone('select '
+            + 'id, act_date, item_id, receiving_quantity, shipping_quantity, description, type, recipe_id, stock_receive_id '
+            + 'from stock_logs where del=false '
+            + 'order by created_at');
+        const stockItem = new StockItemRepo(this.dbBase);
+        const items = await stockItem.selectAll();
+        const stockRecieveRepo = new StockRecieveRepo(this.dbBase);
+        const stockRecieveList = await stockRecieveRepo.selectAll();
+        const recipeRepo = new RecipeRepo(this.dbBase);
+        const recipes = await recipeRepo.selectAll();
+    
+        return result.map(data => {
+            const s = new StockLogEntity();
+            s.id = data.id;
+            s.actDate = data.act_date;
+            s.item = items.find( item => data.item_id === item.id);
+            s.receivingQuantity = Number(data.receiving_quantity);
+            s.shippingQuantity = Number(data.shipping_quantity);
+            s.description = data.description;
+            s.type = Number(data.type);
+            s.stockReceive = stockRecieveList.find( item => data.stock_receive_id === item.id);
+            s.recipe = recipes.find( item => data.recipe_id === item.id);
+            return s;
+        });
+    }
 
-export async function selectAll(){
-    const result = await manyOrNone('select '
-        + 'id, act_date, item_id, receiving_quantity, shipping_quantity, description, type, recipe_id, stock_receive_id '
-        + 'from stock_logs where del=false '
-        + 'order by created_at');
-    const items = await selectAllItems();
-    const stockRecieveList = await selectAllStockReceives();
-    const recipes = await selectAllRecipes();
+    constructor(dbBase) {
 
-    return result.map(data => {
-        const s = new StockLogEntity();
-        s.id = data.id;
-        s.actDate = data.act_date;
-        s.item = items.find( item => data.item_id === item.id);
-        s.receivingQuantity = Number(data.receiving_quantity);
-        s.shippingQuantity = Number(data.shipping_quantity);
-        s.description = data.description;
-        s.type = Number(data.type);
-        s.stockReceive = stockRecieveList.find( item => data.stock_receive_id === item.id);
-        s.recipe = recipes.find( item => data.recipe_id === item.id);
-        return s;
-    });
+        this.dbBase = dbBase;
+
+    }
 }

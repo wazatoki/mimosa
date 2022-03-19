@@ -1,4 +1,4 @@
-import { InventoryRepo, insert, remove, selectAll, update } from "./inventory";
+import { InventoryRepo } from "./inventory";
 import { Inventory } from "../domains/stock";
 import { StockUnit } from '../domains/master'
 import * as db from "./db";
@@ -17,7 +17,8 @@ afterAll(() => {
     d.con.$pool.end();
 });
 
-test.only("inventories insert", async () => {
+
+test("inventories insert", async () => {
     
     const inventoryRepo = new InventoryRepo(d);
     const siArray = await createTestData();
@@ -35,6 +36,8 @@ test.only("inventories insert", async () => {
 
 test("inventories update", async () => {
 
+    const inventoryRepo = new InventoryRepo(d);
+
     const id = createUUID();
     const params = {
         id: id,
@@ -47,14 +50,14 @@ test("inventories update", async () => {
         quantity: 10
     };
 
-    await none('insert into inventories(${this:name}) values(${this:csv})', params);
+    await d.none('insert into inventories(${this:name}) values(${this:csv})', params);
 
     const siArray = await createTestData();
     const inventory = new Inventory(siArray[1], new Date(2020,1,2))
     inventory.id = id
 
-    await update(inventory, "test_staff_id_2");
-    const result = await one('select act_date, item_id, quantity from inventories where id=$1', id);
+    await inventoryRepo.update(inventory, "test_staff_id_2");
+    const result = await d.one('select act_date, item_id, quantity from inventories where id=$1', id);
 
     expect(inventory.actDate).toEqual(result.act_date);
     expect(inventory.item.id).toBe(result.item_id);
@@ -64,6 +67,8 @@ test("inventories update", async () => {
 
 test("inventories remove", async () => {
 
+    const inventoryRepo = new InventoryRepo(d);
+
     const id = createUUID();
     const params = {
         id: id,
@@ -76,15 +81,17 @@ test("inventories remove", async () => {
         quantity: 10
     };
 
-    await none('insert into inventories(${this:name}) values(${this:csv})', params);
+    await d.none('insert into inventories(${this:name}) values(${this:csv})', params);
 
-    await remove(id, "test_staff_id_2");
-    const result = await one('select count(*) from inventories where del=false and id=$1', id);
+    await inventoryRepo.remove(id, "test_staff_id_2");
+    const result = await d.one('select count(*) from inventories where del=false and id=$1', id);
 
     expect(0).toBe(Number(result.count));
 });
 
 test("inventories selectAll", async () => {
+
+    const inventoryRepo = new InventoryRepo(d);
 
     const siArray = await createTestData();
     const invArray = [];
@@ -106,10 +113,10 @@ test("inventories selectAll", async () => {
         inv.quantity = params.quantity;
         invArray.push(inv);
 
-        await none('insert into inventories(${this:name}) values(${this:csv})', params);
+        await d.none('insert into inventories(${this:name}) values(${this:csv})', params);
     }
 
-    const result = await selectAll()
+    const result = await inventoryRepo.selectAll()
 
     const sortedArray = invArray.sort( (a, b) => {
         if (a.actDate > b.actDate){

@@ -1,25 +1,28 @@
-import { insert, remove, selectAll, update } from "./stockUnit";
+import { StockUnitRepo } from "./stockUnit";
 import { StockUnit } from "../domains/master";
-import { con, none, one } from "./db";
+import * as db from "./db";
 import { createUUID } from '../utils/string';
 
+const d = new db.DBbase(db.createConnection());
+
 beforeEach( async () => {
-    await none('delete from stock_units');
+    await d.none('delete from stock_units');
 });
 
 afterAll(() => {
-    con.$pool.end();
+    d.con.$pool.end();
 });
 
 test("stockUnit insert", async () => {
     
+    const stockUnitRepo = new StockUnitRepo(d);
     const stockUnit = new StockUnit()
 
     stockUnit.name = "test_name"
     stockUnit.conversionFactor = 1.5
 
-    const id = await insert(stockUnit, "test_staff_id_1");
-    const result = await one('select name, conversion_factor from stock_units where id=$1', id);
+    const id = await stockUnitRepo.insert(stockUnit, "test_staff_id_1");
+    const result = await d.one('select name, conversion_factor from stock_units where id=$1', id);
 
     expect(stockUnit.name).toBe(result.name);
     expect(stockUnit.conversionFactor).toBe(result.conversion_factor);
@@ -28,6 +31,7 @@ test("stockUnit insert", async () => {
 
 test("stockUnit update", async () => {
 
+    const stockUnitRepo = new StockUnitRepo(d);
     const stockUnit = new StockUnit()
 
     const id = createUUID();
@@ -41,14 +45,14 @@ test("stockUnit update", async () => {
         conversion_factor: 1.5
     };
 
-    await none('insert into stock_units(${this:name}) values(${this:csv})', params);
+    await d.none('insert into stock_units(${this:name}) values(${this:csv})', params);
 
     stockUnit.id = id
     stockUnit.name = "test_name_2"
     stockUnit.conversionFactor = 2
 
-    await update(stockUnit, "test_staff_id_2");
-    const result = await one('select name, conversion_factor from stock_units where id=$1', id);
+    await stockUnitRepo.update(stockUnit, "test_staff_id_2");
+    const result = await d.one('select name, conversion_factor from stock_units where id=$1', id);
 
     expect(stockUnit.name).toBe(result.name);
     expect(stockUnit.conversionFactor).toBe(result.conversion_factor);
@@ -57,6 +61,7 @@ test("stockUnit update", async () => {
 
 test("stockUnit remove", async () => {
 
+    const stockUnitRepo = new StockUnitRepo(d);
     const id = createUUID();
     const params = {
         id: id,
@@ -68,16 +73,17 @@ test("stockUnit remove", async () => {
         conversion_factor: 1.5
     };
 
-    await none('insert into stock_units(${this:name}) values(${this:csv})', params);
+    await d.none('insert into stock_units(${this:name}) values(${this:csv})', params);
 
-    await remove(id, "test_staff_id_2");
-    const result = await one('select count(*) from stock_units where del=false and id=$1', id);
+    await stockUnitRepo.remove(id, "test_staff_id_2");
+    const result = await d.one('select count(*) from stock_units where del=false and id=$1', id);
 
     expect(0).toBe(Number(result.count));
 });
 
 test("stockUnit selectAll", async () => {
 
+    const stockUnitRepo = new StockUnitRepo(d);
     const suArray = [];
     for(let i = 0; i < 10; i++){
 
@@ -97,10 +103,10 @@ test("stockUnit selectAll", async () => {
         su.conversionFactor = params.conversion_factor;
         suArray.push(su);
 
-        await none('insert into stock_units(${this:name}) values(${this:csv})', params);
+        await d.none('insert into stock_units(${this:name}) values(${this:csv})', params);
     }
 
-    const result = await selectAll()
+    const result = await stockUnitRepo.selectAll()
 
     expect(suArray).toEqual(result);
 });

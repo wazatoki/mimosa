@@ -1,20 +1,23 @@
-import { insert, remove, selectAll, update } from "./stockReceive";
+import { StockRecieveRepo } from "./stockRecieve";
 import { StockRecieve } from "../domains/stockReceive";
 import { StockLogEntity } from '../domains/stock'
 import { StockItem, StockUnit} from '../domains/master'
-import { con, none, one } from "./db";
+import * as db from "./db";
 import { createUUID } from '../utils/string';
 
+const d = new db.DBbase(db.createConnection());
+
 beforeEach( async () => {
-    await none('delete from stock_receive');
+    await d.none('delete from stock_receive');
 });
 
 afterAll(() => {
-    con.$pool.end();
+    d.con.$pool.end();
 });
 
 test("stockReceive insert", async () => {
 
+    const stockReceiveRepo = new StockRecieveRepo(d);
     const su = new StockUnit();
         su.id = 'test_unit_id';
         su.name = 'test_unit_name_id';
@@ -39,9 +42,9 @@ test("stockReceive insert", async () => {
     
     const stockReceive = new StockRecieve("test_name", "test00001", new Date(2020,1,1), "test_path")
     stockReceive.stockLogs.push(stockLogEntity);
-    const id = await insert(stockReceive, "test_staff_id_1");
-    const result = await one('select name, slip_id, slip_date, picture_path from stock_receive where id=$1', id);
-    const result1 = await one('select act_date, item_id, receiving_quantity, description, type from stock_logs where stock_receive_id=$1', id);
+    const id = await stockReceiveRepo.insert(stockReceive, "test_staff_id_1");
+    const result = await d.one('select name, slip_id, slip_date, picture_path from stock_receive where id=$1', id);
+    const result1 = await d.one('select act_date, item_id, receiving_quantity, description, type from stock_logs where stock_receive_id=$1', id);
 
     expect(stockReceive.name).toBe(result.name);
     expect(stockReceive.slipID).toEqual(result.slip_id);
@@ -57,6 +60,7 @@ test("stockReceive insert", async () => {
 
 test("stockReceive update", async () => {
 
+    const stockReceiveRepo = new StockRecieveRepo(d);
     const id = createUUID();
     const params = {
         id: id,
@@ -69,7 +73,7 @@ test("stockReceive update", async () => {
         slip_date: new Date(2020,1,1),
         picture_path: 'test_path'
     };
-    await none('insert into stock_receive(${this:name}) values(${this:csv})', params);
+    await d.none('insert into stock_receive(${this:name}) values(${this:csv})', params);
 
     for (let i = 0; i < 5; i++) {
 
@@ -86,7 +90,7 @@ test("stockReceive update", async () => {
             description: 'sample_comment_'+i,
             stock_receive_id: id
         };
-        await none('insert into stock_logs(${this:name}) values(${this:csv})', params);
+        await d.none('insert into stock_logs(${this:name}) values(${this:csv})', params);
     }
 
     const su = new StockUnit();
@@ -102,7 +106,7 @@ test("stockReceive update", async () => {
         si.stockUnit = su
         si.baseUnit = su
 
-    const stockLogEntity = new StockLogEntity()
+    const stockLogEntity = new StockLogEntity();
 
     stockLogEntity.actDate = new Date(2020, 1, 20);
     stockLogEntity.item = si;
@@ -115,10 +119,10 @@ test("stockReceive update", async () => {
     stockReceive.id = id
     stockReceive.stockLogs.push(stockLogEntity);
 
-    await update(stockReceive, "test_staff_id_2");
-    const result = await one('select name, slip_id, slip_date, picture_path from stock_receive where id=$1', id);
-    const result1 = await one('select act_date, item_id, receiving_quantity, description, type from stock_logs where del = false and stock_receive_id=$1', id);
-    const result2 = await one('select count(*) as count from stock_logs where del = false and stock_receive_id=$1', id);
+    await stockReceiveRepo.update(stockReceive, "test_staff_id_2");
+    const result = await d.one('select name, slip_id, slip_date, picture_path from stock_receive where id=$1', id);
+    const result1 = await d.one('select act_date, item_id, receiving_quantity, description, type from stock_logs where del = false and stock_receive_id=$1', id);
+    const result2 = await d.one('select count(*) as count from stock_logs where del = false and stock_receive_id=$1', id);
 
     expect(stockReceive.name).toBe(result.name);
     expect(stockReceive.slipID).toEqual(result.slip_id);
@@ -135,6 +139,7 @@ test("stockReceive update", async () => {
 
 test("stockReceive remove", async () => {
 
+    const stockReceiveRepo = new StockRecieveRepo(d);
     const id = createUUID();
     const params = {
         id: id,
@@ -147,7 +152,7 @@ test("stockReceive remove", async () => {
         slip_date: new Date(2020,1,1),
         picture_path: 'test_path'
     };
-    await none('insert into stock_receive(${this:name}) values(${this:csv})', params);
+    await d.none('insert into stock_receive(${this:name}) values(${this:csv})', params);
 
     for (let i = 0; i < 5; i++) {
 
@@ -164,12 +169,12 @@ test("stockReceive remove", async () => {
             description: 'sample_comment_'+i,
             stock_receive_id: id
         };
-        await none('insert into stock_logs(${this:name}) values(${this:csv})', params);
+        await d.none('insert into stock_logs(${this:name}) values(${this:csv})', params);
     }
 
-    await remove(id, "test_staff_id_2");
-    const result = await one('select count(*) from stock_receive where del=false and id=$1', id);
-    const result1 = await one('select count(*) as count from stock_logs where del = false and stock_receive_id=$1', id);
+    await stockReceiveRepo.remove(id, "test_staff_id_2");
+    const result = await d.one('select count(*) from stock_receive where del=false and id=$1', id);
+    const result1 = await d.one('select count(*) as count from stock_logs where del = false and stock_receive_id=$1', id);
 
     expect(0).toBe(Number(result.count));
     expect(0).toBe(Number(result1.count));
@@ -177,6 +182,7 @@ test("stockReceive remove", async () => {
 
 test("stockReceive selectAll", async () => {
 
+    const stockReceiveRepo = new StockRecieveRepo(d);
     const srArray = [];
     for(let i = 0; i < 10; i++){
 
@@ -196,10 +202,10 @@ test("stockReceive selectAll", async () => {
         sr.id = params.id;
         srArray.push(sr);
 
-        await none('insert into stock_receive(${this:name}) values(${this:csv})', params);
+        await d.none('insert into stock_receive(${this:name}) values(${this:csv})', params);
     }
 
-    const result = await selectAll()
+    const result = await stockReceiveRepo.selectAll();
 
     const sortedArray = srArray.sort( (a, b) => {
         if (a.slipDate > b.slipDate){

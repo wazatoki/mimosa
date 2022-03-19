@@ -1,20 +1,22 @@
 import { StockItem, StockUnit } from "../domains/master";
-import { compare } from "../testUtils/testUtil";
 import { createUUID } from "../utils/string";
-import { con, none, one } from "./db";
-import { insert, update, remove, selectAll } from "./stockItem";
+import * as db from "./db";
+import { StockItemRepo } from "./stockItem";
+
+const d = new db.DBbase(db.createConnection())
 
 beforeEach( async () => {
-    await none('delete from stock_items');
-    await none('delete from stock_units');
+    await d.none('delete from stock_items');
+    await d.none('delete from stock_units');
 });
 
 afterAll(() => {
-    con.$pool.end();
+    d.con.$pool.end();
 });
 
 test("stockItem insert", async () => {
     
+    const stockItemRepo = new StockItemRepo(d);
     const stockItem = new StockItem();
     stockItem.name = "test_name";
     stockItem.receivingUnit.id= createUUID();
@@ -22,8 +24,8 @@ test("stockItem insert", async () => {
     stockItem.stockUnit.id= createUUID();
     stockItem.baseUnit.id= createUUID();
 
-    const id = await insert(stockItem, "test_staff_id_1");
-    const result = await one('select name, receiving_unit_id, shipping_unit_id, stock_unit_id, base_unit_id from stock_items where id=$1', id);
+    const id = await stockItemRepo.insert(stockItem, "test_staff_id_1");
+    const result = await d.one('select name, receiving_unit_id, shipping_unit_id, stock_unit_id, base_unit_id from stock_items where id=$1', id);
 
     expect(stockItem.name).toBe(result.name);
     expect(stockItem.receivingUnit.id).toBe(result.receiving_unit_id);
@@ -35,6 +37,7 @@ test("stockItem insert", async () => {
 
 test("stockItem update", async () => {
 
+    const stockItemRepo = new StockItemRepo(d);
     const stockItem = new StockItem();
     const id = createUUID();
     const params = {
@@ -50,7 +53,7 @@ test("stockItem update", async () => {
         base_unit_id: createUUID()
     };
 
-    await none('insert into stock_items(${this:name}) values(${this:csv})', params);
+    await d.none('insert into stock_items(${this:name}) values(${this:csv})', params);
 
     stockItem.id = id;
     stockItem.name = "updated_test_name"
@@ -59,8 +62,8 @@ test("stockItem update", async () => {
     stockItem.stockUnit.id= createUUID();
     stockItem.baseUnit.id= createUUID();
     
-    await update(stockItem, "test_staff_id_2");
-    const result = await one('select name, receiving_unit_id, shipping_unit_id, stock_unit_id, base_unit_id from stock_items where id=$1', id);
+    await stockItemRepo.update(stockItem, "test_staff_id_2");
+    const result = await d.one('select name, receiving_unit_id, shipping_unit_id, stock_unit_id, base_unit_id from stock_items where id=$1', id);
 
     expect(stockItem.name).toEqual(result.name);
     expect(stockItem.receivingUnit.id).toBe(result.receiving_unit_id);
@@ -71,6 +74,7 @@ test("stockItem update", async () => {
 
 test("stockItem remove", async () => {
 
+    const stockItemRepo = new StockItemRepo(d);
     const id = createUUID();
     const params = {
         id: id,
@@ -85,16 +89,17 @@ test("stockItem remove", async () => {
         base_unit_id: createUUID()
     };
 
-    await none('insert into stock_items(${this:name}) values(${this:csv})', params);
+    await d.none('insert into stock_items(${this:name}) values(${this:csv})', params);
 
-    await remove(id, "test_staff_id_2");
-    const result = await one('select count(*) from stock_items where del=false and id=$1', id);
+    await stockItemRepo.remove(id, "test_staff_id_2");
+    const result = await d.one('select count(*) from stock_items where del=false and id=$1', id);
 
     expect(0).toBe(Number(result.count));
 });
 
 test("stockItem selectAll", async () => {
 
+    const stockItemRepo = new StockItemRepo(d);
     const suArray = [];
     for(let i = 0; i < 5; i++){
 
@@ -114,7 +119,7 @@ test("stockItem selectAll", async () => {
         su.conversionFactor = params.conversion_factor;
         suArray.push(su);
 
-        await none('insert into stock_units(${this:name}) values(${this:csv})', params);
+        await d.none('insert into stock_units(${this:name}) values(${this:csv})', params);
     }
 
     const siArray = [];
@@ -142,10 +147,10 @@ test("stockItem selectAll", async () => {
         si.baseUnit = suArray[(i + 5) % 5]
         siArray.push(si);
 
-        await none('insert into stock_items(${this:name}) values(${this:csv})', params);
+        await d.none('insert into stock_items(${this:name}) values(${this:csv})', params);
     }
 
-    const result = await selectAll()
+    const result = await stockItemRepo.selectAll()
 
     expect(siArray).toEqual(result);
 });

@@ -1,20 +1,23 @@
-import { insert, remove, selectAll, update } from "./recipe";
+import { RecipeRepo } from "./recipe";
 import { Recipe } from "../domains/recipe";
 import { StockLogEntity } from '../domains/stock'
 import { StockItem, StockUnit} from '../domains/master'
-import { con, none, one } from "./db";
+import * as db from "./db";
 import { createUUID } from '../utils/string';
 
+const d = new db.DBbase(db.createConnection());
+
 beforeEach( async () => {
-    await none('delete from recipe');
+    await d.none('delete from recipe');
 });
 
 afterAll(() => {
-    con.$pool.end();
+    d.con.$pool.end();
 });
 
 test("recipe insert", async () => {
 
+    const recipeRepo = new RecipeRepo(d);
     const su = new StockUnit();
         su.id = 'test_unit_id';
         su.name = 'test_unit_name_id';
@@ -40,9 +43,9 @@ test("recipe insert", async () => {
     const recipe = new Recipe("test_name", new Date(2020,1,1));
     recipe.stockLogs.push(stockLogEntity);
 
-    const id = await insert(recipe, "test_staff_id_1");
-    const result = await one('select name, act_date from recipe where id=$1', id);
-    const result1 = await one('select act_date, item_id, receiving_quantity, description, type from stock_logs where recipe_id=$1', id);
+    const id = await recipeRepo.insert(recipe, "test_staff_id_1");
+    const result = await d.one('select name, act_date from recipe where id=$1', id);
+    const result1 = await d.one('select act_date, item_id, receiving_quantity, description, type from stock_logs where recipe_id=$1', id);
 
     expect(recipe.name).toBe(result.name);
     expect(recipe.actDate).toEqual(result.act_date);
@@ -57,6 +60,7 @@ test("recipe insert", async () => {
 
 test("recipe update", async () => {
 
+    const recipeRepo = new RecipeRepo(d);
     const id = createUUID();
     const params = {
         id: id,
@@ -68,7 +72,7 @@ test("recipe update", async () => {
         act_date: new Date(2020,1,1)
     };
 
-    await none('insert into recipe(${this:name}) values(${this:csv})', params);
+    await d.none('insert into recipe(${this:name}) values(${this:csv})', params);
 
     for (let i = 0; i < 5; i++) {
 
@@ -85,7 +89,7 @@ test("recipe update", async () => {
             description: 'sample_comment_'+i,
             recipe_id: id
         };
-        await none('insert into stock_logs(${this:name}) values(${this:csv})', params);
+        await d.none('insert into stock_logs(${this:name}) values(${this:csv})', params);
     }
 
     const su = new StockUnit();
@@ -107,10 +111,10 @@ test("recipe update", async () => {
     recipe.id = id
     recipe.stockLogs.push(stockLogEntity);
 
-    await update(recipe, "test_staff_id_2");
-    const result = await one('select name, act_date from recipe where id=$1', id);
-    const result1 = await one('select act_date, item_id, receiving_quantity, description, type from stock_logs where del = false and recipe_id=$1', id);
-    const result2 = await one('select count(*) as count from stock_logs where del = false and recipe_id=$1', id);
+    await recipeRepo.update(recipe, "test_staff_id_2");
+    const result = await d.one('select name, act_date from recipe where id=$1', id);
+    const result1 = await d.one('select act_date, item_id, receiving_quantity, description, type from stock_logs where del = false and recipe_id=$1', id);
+    const result2 = await d.one('select count(*) as count from stock_logs where del = false and recipe_id=$1', id);
 
     expect(recipe.name).toBe(result.name);
     expect(recipe.actDate).toEqual(result.act_date);
@@ -126,6 +130,7 @@ test("recipe update", async () => {
 
 test("recipe remove", async () => {
 
+    const recipeRepo = new RecipeRepo(d);
     const id = createUUID();
     const params = {
         id: id,
@@ -137,7 +142,7 @@ test("recipe remove", async () => {
         act_date: new Date(2020,1,1)
     };
 
-    await none('insert into recipe(${this:name}) values(${this:csv})', params);
+    await d.none('insert into recipe(${this:name}) values(${this:csv})', params);
 
     for (let i = 0; i < 5; i++) {
 
@@ -154,12 +159,12 @@ test("recipe remove", async () => {
             description: 'sample_comment_'+i,
             recipe_id: id
         };
-        await none('insert into stock_logs(${this:name}) values(${this:csv})', params);
+        await d.none('insert into stock_logs(${this:name}) values(${this:csv})', params);
     }
 
-    await remove(id, "test_staff_id_2");
-    const result = await one('select count(*) from recipe where del=false and id=$1', id);
-    const result1 = await one('select count(*) as count from stock_logs where del = false and recipe_id=$1', id);
+    await recipeRepo.remove(id, "test_staff_id_2");
+    const result = await d.one('select count(*) from recipe where del=false and id=$1', id);
+    const result1 = await d.one('select count(*) as count from stock_logs where del = false and recipe_id=$1', id);
 
     expect(0).toBe(Number(result.count));
     expect(0).toBe(Number(result1.count));
@@ -167,6 +172,7 @@ test("recipe remove", async () => {
 
 test("recipe selectAll", async () => {
 
+    const recipeRepo = new RecipeRepo(d);
     const reArray = [];
     for(let i = 0; i < 10; i++){
 
@@ -184,10 +190,10 @@ test("recipe selectAll", async () => {
         re.id = params.id;
         reArray.push(re);
 
-        await none('insert into recipe(${this:name}) values(${this:csv})', params);
+        await d.none('insert into recipe(${this:name}) values(${this:csv})', params);
     }
 
-    const result = await selectAll()
+    const result = await recipeRepo.selectAll()
 
     const sortedArray = reArray.sort( (a, b) => {
         if (a.actDate > b.actDate){
