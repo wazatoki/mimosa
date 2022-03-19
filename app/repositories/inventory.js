@@ -6,14 +6,14 @@ export class InventoryRepo {
 
     dbBase;
 
-    async insert(inventory, ope_staff_id) {
+    async insert(inventory, opeStaffID) {
 
         const params = {
             id: createUUID(),
             created_at: new Date(),
-            created_by: ope_staff_id,
+            created_by: opeStaffID,
             operated_at: new Date(),
-            operated_by: ope_staff_id,
+            operated_by: opeStaffID,
             act_date: inventory.actDate,
             item_id: inventory.item.id,
             quantity: inventory.quantity
@@ -24,14 +24,14 @@ export class InventoryRepo {
         return params.id
     }
 
-    async update(inventory, ope_staff_id) {
+    async update(inventory, opeStaffID) {
 
         const params = {
             id: inventory.id,
             created_at: new Date(),
-            created_by: ope_staff_id,
+            created_by: opeStaffID,
             operated_at: new Date(),
-            operated_by: ope_staff_id,
+            operated_by: opeStaffID,
             act_date: inventory.actDate,
             item_id: inventory.item.id,
             quantity: inventory.quantity
@@ -42,13 +42,13 @@ export class InventoryRepo {
             + 'where id=$(id)', params);
     }
 
-    async remove(id, ope_staff_id) {
+    async remove(id, opeStaffID) {
 
         const params = {
             id: id,
             del: true,
             operated_at: new Date(),
-            operated_by: ope_staff_id
+            operated_by: opeStaffID
         };
     
         await this.dbBase.none('update inventories '

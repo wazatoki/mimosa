@@ -8,14 +8,14 @@ export class StockRepo {
 
     dbBase;
 
-    async insert(stockLogEntity, ope_staff_id) {
+    async insert(stockLogEntity, opeStaffID) {
 
         const params = {
             id: createUUID(),
             created_at: new Date(),
-            created_by: ope_staff_id,
+            created_by: opeStaffID,
             operated_at: new Date(),
-            operated_by: ope_staff_id,
+            operated_by: opeStaffID,
             act_date: stockLogEntity.actDate,
             item_id: stockLogEntity.item.id,
             receiving_quantity: stockLogEntity.receivingQuantity,
@@ -31,12 +31,12 @@ export class StockRepo {
         return params.id
     }
     
-    async update(stockLogEntity, ope_staff_id) {
+    async update(stockLogEntity, opeStaffID) {
         
         const params = {
             id: stockLogEntity.id,
             operated_at: new Date(),
-            operated_by: ope_staff_id,
+            operated_by: opeStaffID,
             act_date: stockLogEntity.actDate,
             item_id: stockLogEntity.item.id,
             receiving_quantity: stockLogEntity.receivingQuantity,
@@ -54,39 +54,39 @@ export class StockRepo {
             + 'where id=$(id)', params);
     }
     
-    async remove(id, ope_staff_id) {
+    async remove(id, opeStaffID) {
         
         const params = {
             id: id,
             del: true,
             operated_at: new Date(),
-            operated_by: ope_staff_id
+            operated_by: opeStaffID
         };
     
         await this.dbBase.none('update stock_logs '
             + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where id=$(id)', params);
     }
     
-    async removeByStockReceiveID(stockReceiveID, ope_staff_id) {
+    async removeByStockReceiveID(stockReceiveID, opeStaffID) {
         
         const params = {
             stock_receive_id: stockReceiveID,
             del: true,
             operated_at: new Date(),
-            operated_by: ope_staff_id
+            operated_by: opeStaffID
         };
     
         await this.dbBase.none('update stock_logs '
             + 'set del=true, operated_at=$(operated_at), operated_by=$(operated_by) where stock_receive_id=$(stock_receive_id)', params);
     }
     
-    async removeByRecipeID(recipeID, ope_staff_id) {
+    async removeByRecipeID(recipeID, opeStaffID) {
         
         const params = {
             recipe_id: recipeID,
             del: true,
             operated_at: new Date(),
-            operated_by: ope_staff_id
+            operated_by: opeStaffID
         };
     
         await this.dbBase.none('update stock_logs '

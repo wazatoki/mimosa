@@ -6,14 +6,14 @@ export class StockItemRepo {
 
     dbBase;
 
-    async insert(stockItem, ope_staff_id) {
+    async insert(stockItem, opeStaffID) {
 
         const params = {
             id: createUUID(),
             created_at: new Date(),
-            created_by: ope_staff_id,
+            created_by: opeStaffID,
             operated_at: new Date(),
-            operated_by: ope_staff_id,
+            operated_by: opeStaffID,
             name: stockItem.name,
             receiving_unit_id: stockItem.receivingUnit.id,
             shipping_unit_id: stockItem.shippingUnit.id,
@@ -26,12 +26,12 @@ export class StockItemRepo {
         return params.id
     }
     
-    async update(stockItem, ope_staff_id) {
+    async update(stockItem, opeStaffID) {
         
         const params = {
             id: stockItem.id,
             operated_at: new Date(),
-            operated_by: ope_staff_id,
+            operated_by: opeStaffID,
             name: stockItem.name,
             receiving_unit_id: stockItem.receivingUnit.id,
             shipping_unit_id: stockItem.shippingUnit.id,
@@ -45,13 +45,13 @@ export class StockItemRepo {
             + 'where id=$(id)', params);
     }
     
-    async remove(id, ope_staff_id) {
+    async remove(id, opeStaffID) {
         
         const params = {
             id: id,
             del: true,
             operated_at: new Date(),
-            operated_by: ope_staff_id
+            operated_by: opeStaffID
         };
     
         await this.dbBase.none('update stock_items '

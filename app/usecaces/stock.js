@@ -1,7 +1,8 @@
 import { StockLog } from "../domains/stock"
 
-export function recieve(stockRecieve, stockRecieveRepo, stockRepo) { 
-    stockRecieve.id = stockRecieveRepo.insert(stockRecieve);
+export async function recieve(stockRecieve, stockRecieveRepo, opeStaffID) { 
+    stockRecieve.id = await stockRecieveRepo.insert(stockRecieve, opeStaffID);
+    return stockRecieve;
 }
 
 export function ship(stockLog, repo) { 
