@@ -1,13 +1,17 @@
 import pgPromise from 'pg-promise';
-import config from 'config'
+import config from 'config';
+
+let connectionBuffer;
 
 export function createConnection() {
 
-    const pgp = pgPromise();
-    const connectString = 'postgres://' + config.db_user + ':' + config.db_pass + '@' + config.db_host + ':' + config.db_port + '/' + config.db_name;
-    const dbConnection = pgp(connectString);
-    return dbConnection;
+    if (!connectionBuffer) {
+        const pgp = pgPromise();
+        const connectString = 'postgres://' + config.db_user + ':' + config.db_pass + '@' + config.db_host + ':' + config.db_port + '/' + config.db_name;
+        connectionBuffer = pgp(connectString);
+    }
 
+    return connectionBuffer;
 }
 
 export class DBbase {
