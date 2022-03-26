@@ -4,6 +4,8 @@ import config from 'config'
 // アクセストークンは有効期限30分
 export function createAccessToken(userID) {
 
+    const SECRET_KEY = config.secret_key
+
     const payload = {
         userID: userID
     };
@@ -17,6 +19,9 @@ export function createAccessToken(userID) {
 
 // リフレッシュトークンは有効期限１日
 export function createRefreshToken(userID) {
+
+    const SECRET_KEY = config.secret_key
+
     const payload = {
         userID: userID
     };
@@ -29,6 +34,9 @@ export function createRefreshToken(userID) {
 }
 
 export function verifyToken(req, res, next) {
+
+    const SECRET_KEY = config.secret_key
+
     const authHeader = req.headers["authorization"];
     //HeaderにAuthorizationが定義されているか
     if (authHeader !== undefined) {
@@ -37,7 +45,7 @@ export function verifyToken(req, res, next) {
             try {
 
                 // 認証成功の場合
-                const token = jwt.verify(authHeader.split(" ")[1], 'my_secret');
+                const token = jwt.verify(authHeader.split(" ")[1], SECRET_KEY);
 
                 req.authorizedUserID = token.userID
                 next();

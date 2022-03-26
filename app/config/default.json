@@ -5,5 +5,6 @@
     "db_pass": "brewing_support",
     "db_name": "brewing_supportdb",
     "access_token_expires": "30m",
-    "refresh_token_expires": "1d"
+    "refresh_token_expires": "1d",
+    "secret_key": "my_secret"
 }
