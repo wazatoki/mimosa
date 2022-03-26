@@ -11,9 +11,9 @@ const dbBase = new DBbase(createConnection());
 router.post('/stockRecieve', function(req, res, next) {
   
   const p = req.body;
-  const stockRecieveRepo = new StockRecieveRepo(dbBase)
-  const stockRecieve = new StockRecieve(p.name, p.slipID, p.slipDate, )
-  const sr2 = useStock.recieve(stockRecieve, stockRecieveRepo, )
+  const stockRecieveRepo = new StockRecieveRepo(dbBase);
+  const stockRecieve = new StockRecieve(p.name, p.slipID, p.slipDate, null,p.stockLogs);
+  const sr2 = useStock.recieve(stockRecieve, stockRecieveRepo, p.authorizedUserID)
   res.json();
 });
 
