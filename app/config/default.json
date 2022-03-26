@@ -3,5 +3,7 @@
     "db_port": "5432",
     "db_user": "brewing_support",
     "db_pass": "brewing_support",
-    "db_name": "brewing_supportdb"
+    "db_name": "brewing_supportdb",
+    "access_token_expires": "30m",
+    "refresh_token_expires": "1d"
 }

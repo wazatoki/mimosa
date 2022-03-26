@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import config from 'config'
 
 // アクセストークンは有効期限30分
 export function createAccessToken(userID) {
@@ -7,7 +8,7 @@ export function createAccessToken(userID) {
         userID: userID
     };
     const option = {
-        expiresIn: '30m'
+        expiresIn: config.access_token_expires
     }
     const token = jwt.sign(payload, SECRET_KEY, option);
 
@@ -20,7 +21,7 @@ export function createRefreshToken(userID) {
         userID: userID
     };
     const option = {
-        expiresIn: '1d'
+        expiresIn: config.refresh_token_expires
     }
     const token = jwt.sign(payload, SECRET_KEY, option);
 
