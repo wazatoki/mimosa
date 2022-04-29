@@ -45,8 +45,8 @@
 // @ is an alias to /src
 import Header from "@/components/Header.vue";
 import StockRecievingItem from "@/components/StockRecievingItem.vue";
-import { Item } from "@/models/recieve";
-import { reactive, ref } from "vue";
+
+import { ref } from "vue";
 import { createUUID } from "@/utils/string"
 
 export default {

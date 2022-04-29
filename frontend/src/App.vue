@@ -3,7 +3,7 @@
     <div id="nav">
       <router-link to="/">brewery support</router-link> |
       <router-link to="/about">About</router-link>|
-      <router-link to="/brewing">Brewing</router-link>|
+      <router-link to="/brewing-record">醸造記録</router-link>|
       <router-link to="/stocks/recieving">入荷</router-link>
     </div>
     <router-view></router-view>
