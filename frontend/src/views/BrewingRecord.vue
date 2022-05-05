@@ -10,6 +10,12 @@
         </div>
       </el-col>
     </el-row>
+    <el-dialog v-model="dialogVisible">
+    <BrewingRecordForm
+      :selected_datetime="selected_datetime"
+    ></BrewingRecordForm>
+    </el-dialog>
+    
   </div>
 </template>
 
@@ -19,13 +25,17 @@ import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import BrewingRecordForm from "@/components/BrewingRecordForm.vue";
+import { reactive, ref } from "vue";
 
 export default {
   name: "BrewingRecord",
   components: {
-    FullCalendar, // make the <FullCalendar> tag available
+    FullCalendar,
+    BrewingRecordForm,
   },
   setup() {
+    
     const calendarOptions = {
       plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
       initialView: "timeGridWeek",
@@ -35,11 +45,21 @@ export default {
       },
     };
 
-    const onSelectCalender = (selectionInfo) => {
-      console.log(selectionInfo);
-    };
+    const dialogVisible = ref(false)
 
-    return { calendarOptions };
+    const selected_datetime = reactive({
+      from: null,
+      to: null,
+    });
+
+    function onSelectCalender(selectionInfo) {
+      selected_datetime.from = selectionInfo.start
+      selected_datetime.to = selectionInfo.end
+      dialogVisible.value = true
+    }
+
+
+    return { calendarOptions, selected_datetime, dialogVisible };
   },
 };
 </script>

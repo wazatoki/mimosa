@@ -27,7 +27,7 @@ test("recipe insert", async () => {
         si.id = 'test_item_id_1';
         si.name = 'test_item_name_1';
         si.receivingUnit = su
-        si.shippingUnit = su
+        si.brewingUnit = su
         si.stockUnit = su
         si.baseUnit = su
 
@@ -101,7 +101,7 @@ test("recipe update", async () => {
         si.id = 'test_item_id_1';
         si.name = 'test_item_name_1';
         si.receivingUnit = su
-        si.shippingUnit = su
+        si.brewingUnit = su
         si.stockUnit = su
         si.baseUnit = su
 

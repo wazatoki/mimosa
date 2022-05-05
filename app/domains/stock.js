@@ -79,7 +79,7 @@ export class StockLog {
 
         const result = (inventory.quantity * inventory.item.stockUnit.conversionFactor
             + receiving * inventory.item.receivingUnit.conversionFactor
-            - shipping * inventory.item.shippingUnit.conversionFactor) / inventory.item.stockUnit.conversionFactor
+            - shipping * inventory.item.brewingUnit.conversionFactor) / inventory.item.stockUnit.conversionFactor
 
         return result;
     }

@@ -16,7 +16,7 @@ export class StockItemRepo {
             operated_by: opeStaffID,
             name: stockItem.name,
             receiving_unit_id: stockItem.receivingUnit.id,
-            shipping_unit_id: stockItem.shippingUnit.id,
+            shipping_unit_id: stockItem.brewingUnit.id,
             stock_unit_id: stockItem.stockUnit.id,
             base_unit_id: stockItem.baseUnit.id
         };
@@ -34,7 +34,7 @@ export class StockItemRepo {
             operated_by: opeStaffID,
             name: stockItem.name,
             receiving_unit_id: stockItem.receivingUnit.id,
-            shipping_unit_id: stockItem.shippingUnit.id,
+            shipping_unit_id: stockItem.brewingUnit.id,
             stock_unit_id: stockItem.stockUnit.id,
             base_unit_id: stockItem.baseUnit.id
         };
@@ -73,7 +73,7 @@ export class StockItemRepo {
             si.id = data.id;
             si.name = data.name;
             si.receivingUnit = stockUnits.find(unit => unit.id === data.receiving_unit_id);
-            si.shippingUnit = stockUnits.find(unit => unit.id === data.shipping_unit_id);
+            si.brewingUnit = stockUnits.find(unit => unit.id === data.shipping_unit_id);
             si.stockUnit = stockUnits.find(unit => unit.id === data.stock_unit_id);
             si.baseUnit = stockUnits.find(unit => unit.id === data.base_unit_id);
     

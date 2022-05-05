@@ -2,7 +2,7 @@ export class StockItem {
     id
     name
     receivingUnit
-    shippingUnit
+    brewingUnit
     stockUnit
     baseUnit
 
@@ -10,7 +10,7 @@ export class StockItem {
         this.id = "";
         this.name = "";
         this.receivingUnit = new StockUnit();
-        this.shippingUnit = new StockUnit();
+        this.brewingUnit = new StockUnit();
         this.stockUnit = new StockUnit();
         this.baseUnit = new StockUnit();
     }

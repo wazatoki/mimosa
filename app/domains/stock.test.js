@@ -53,21 +53,21 @@ function createStockItems() {
         id: createUUID(),
         name: "test_name_1",
         receivingUnit: suArray[0],
-        shippingUnit: suArray[1],
+        brewingUnit: suArray[1],
         stockUnit: suArray[0],
         baseUnit: suArray[0]
     }, {
         id: createUUID(),
         name: "test_name_2",
         receivingUnit: suArray[0],
-        shippingUnit: suArray[1],
+        brewingUnit: suArray[1],
         stockUnit: suArray[0],
         baseUnit: suArray[0]
     }, {
         id: createUUID(),
         name: "test_name_3",
         receivingUnit: suArray[0],
-        shippingUnit: suArray[1],
+        brewingUnit: suArray[1],
         stockUnit: suArray[1],
         baseUnit: suArray[0]
     }];

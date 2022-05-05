@@ -107,7 +107,7 @@ test("stockLogs insert", async () => {
         si.id = params.id;
         si.name = params.name;
         si.receivingUnit = suArray[(i + 3) % 5]
-        si.shippingUnit = suArray[(i + 2) % 5]
+        si.brewingUnit = suArray[(i + 2) % 5]
         si.stockUnit = suArray[(i + 7) % 5]
         si.baseUnit = suArray[(i + 5) % 5]
         siArray.push(si);
@@ -223,7 +223,7 @@ test("stockLogs update", async () => {
         si.id = params.id;
         si.name = params.name;
         si.receivingUnit = suArray[(i + 3) % 5]
-        si.shippingUnit = suArray[(i + 2) % 5]
+        si.brewingUnit = suArray[(i + 2) % 5]
         si.stockUnit = suArray[(i + 7) % 5]
         si.baseUnit = suArray[(i + 5) % 5]
         siArray.push(si);
@@ -382,7 +382,7 @@ test("stock selectAll", async () => {
         si.id = params.id;
         si.name = params.name;
         si.receivingUnit = suArray[(i + 3) % 5]
-        si.shippingUnit = suArray[(i + 2) % 5]
+        si.brewingUnit = suArray[(i + 2) % 5]
         si.stockUnit = suArray[(i + 7) % 5]
         si.baseUnit = suArray[(i + 5) % 5]
         siArray.push(si);

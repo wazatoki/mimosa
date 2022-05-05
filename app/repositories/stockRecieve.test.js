@@ -27,7 +27,7 @@ test("stockReceive insert", async () => {
         si.id = 'test_item_id_1';
         si.name = 'test_item_name_1';
         si.receivingUnit = su
-        si.shippingUnit = su
+        si.brewingUnit = su
         si.stockUnit = su
         si.baseUnit = su
 
@@ -102,7 +102,7 @@ test("stockReceive update", async () => {
         si.id = 'test_item_id_1';
         si.name = 'test_item_name_1';
         si.receivingUnit = su
-        si.shippingUnit = su
+        si.brewingUnit = su
         si.stockUnit = su
         si.baseUnit = su
 
