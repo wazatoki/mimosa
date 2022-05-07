@@ -47,9 +47,26 @@
       @update:brewingItemData="updateBrewingItemData($event, index)"
       @deleteItem="removeBrewingItemData(index)"
     ></BrewingRecordItem>
-
-    <el-button type="primary" @click="onSubmit">Create</el-button>
-    <el-button @click="onCancel">Cancel</el-button>
+    <el-row>
+      <el-col>
+        <el-button type="primary" @click="onSubmit">Create</el-button>
+        <el-button @click="onCancel">Cancel</el-button>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="4">
+        <el-popconfirm
+          confirm-button-text="Yes"
+          cancel-button-text="No"
+          title="Are you sure to delete this?"
+          @confirm="onDelete"
+        >
+          <template #reference>
+            <el-button type="danger">Delete</el-button>
+          </template>
+        </el-popconfirm>
+      </el-col>
+    </el-row>
   </el-form>
 </template>
 
@@ -72,7 +89,7 @@ export default {
       type: Array,
     },
   },
-  emits: ["submitBrewEvent", "clickCancel"],
+  emits: ["submitBrewEvent", "clickCancel", "clickDelete"],
 
   setup(props, { emit }) {
     const form = reactive(
@@ -120,7 +137,11 @@ export default {
     };
 
     const onCancel = () => {
-        emit("clickCancel");
+      emit("clickCancel");
+    };
+
+    const onDelete = () => {
+      emit("clickDelete", form.id);
     };
 
     const itemMsts = [
@@ -182,6 +203,7 @@ export default {
       removeBrewingItemData,
       onSubmit,
       onCancel,
+      onDelete,
       itemMsts,
     };
   },

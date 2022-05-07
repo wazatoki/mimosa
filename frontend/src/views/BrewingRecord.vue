@@ -15,6 +15,7 @@
         :brewEvent="a_brewEvent"
         @submitBrewEvent="onSubmitBrewEvent($event)"
         @clickCancel="onClickBrewingRecordFormCancel"
+        @clickDelete="onClickBrewingRecordFormDelete($event)"
       ></BrewingRecordForm>
     </el-dialog>
   </div>
@@ -113,8 +114,22 @@ export default {
         be.name = info.event.title;
         be.from = info.event.start;
         be.to = info.event.end;
+    }
 
-        console.log(brewEvents)
+    function onClickBrewingRecordFormDelete(id) {
+      dialogVisible.value = false;
+      // calenderEvent削除処理
+      const ceIndex = calendarOptions.events.findIndex(
+        (e) => e.id === id
+      );
+      if (ceIndex >= 0) {
+        calendarOptions.events.splice(ceIndex, 1);
+      }
+      // brewEvent削除処理
+      const beIndex = brewEvents.findIndex((e) => e.id === id);
+      if (beIndex >= 0) {
+        brewEvents.splice(beIndex, 1);
+      }
     }
 
     function onClickBrewingRecordFormCancel() {
@@ -129,6 +144,7 @@ export default {
       onClickCalenderEvent,
       onChangeCalendarEvent,
       onClickBrewingRecordFormCancel,
+      onClickBrewingRecordFormDelete,
     };
   },
 };

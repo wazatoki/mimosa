@@ -1,6 +1,6 @@
 <template>
   <el-row class="brewing-record-item">
-    <el-col :span="12"
+    <el-col :span="14"
       ><el-select
         @change="onChange"
         v-model="selectedItemID"
@@ -16,7 +16,7 @@
         </el-option>
       </el-select>
     </el-col>
-    <el-col :span="8"
+    <el-col :span="4"
       ><el-input
         @blur="emitData"
         v-model="quantity"
@@ -25,7 +25,7 @@
       />
     </el-col>
     <el-col :span="2">{{ unitName }}</el-col>
-    <el-col :span="2">
+    <el-col :span="4">
       <el-button type="warning" @click="clickDelete">行削除</el-button>
     </el-col>
   </el-row>
@@ -72,3 +72,11 @@ export default {
   },
 };
 </script>
+<style>
+div.form-input {
+  width: 95%;
+}
+button.el-button {
+  margin: 10px;
+}
+</style>
