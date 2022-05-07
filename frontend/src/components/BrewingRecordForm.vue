@@ -8,6 +8,13 @@
       </el-col>
     </el-row>
     <el-row>
+      <el-col :span="24">
+        <el-form-item label="event description" :label-width="formLabelWidth">
+          <el-input type="textarea" v-model="form.desc" autocomplete="off" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
       <el-col :span="12">
         <el-form-item label="from" :label-width="formLabelWidth">
           <el-date-picker
@@ -42,7 +49,7 @@
     ></BrewingRecordItem>
 
     <el-button type="primary" @click="onSubmit">Create</el-button>
-    <el-button>Cancel</el-button>
+    <el-button @click="onCancel">Cancel</el-button>
   </el-form>
 </template>
 
@@ -50,6 +57,7 @@
 import { reactive, watch } from "vue";
 import { createUUID } from "@/utils/string";
 import BrewingRecordItem from "@/components/BrewingRecordItem.vue";
+import { BrewEvent } from "@/models/brewEvent";
 
 export default {
   name: "BrewingRecordForm",
@@ -57,23 +65,35 @@ export default {
     BrewingRecordItem,
   },
   props: {
-    selected_datetime: {
-      type: Object,
+    brewEvent: {
+      type: BrewEvent,
+    },
+    itemMstss: {
+      type: Array,
     },
   },
+  emits: ["submitBrewEvent", "clickCancel"],
 
-  setup(props) {
-    const form = reactive({
-      name: "",
-      from: props.selected_datetime.from,
-      to: props.selected_datetime.to,
-      ingredients: [],
-    });
+  setup(props, { emit }) {
+    const form = reactive(
+      new BrewEvent(
+        props.brewEvent.id,
+        props.brewEvent.name,
+        props.brewEvent.desc,
+        props.brewEvent.from,
+        props.brewEvent.to,
+        props.brewEvent.ingredients
+      )
+    );
     const formLabelWidth = "140px";
 
-    watch(props.selected_datetime, (n) => {
+    watch(props.brewEvent, (n) => {
+      form.id = n.id;
+      form.name = n.name;
+      form.desc = n.desc;
       form.from = n.from;
       form.to = n.to;
+      form.ingredients = n.ingredients;
     });
 
     const addIngredient = () => {
@@ -81,7 +101,7 @@ export default {
     };
 
     const updateBrewingItemData = (brewingItemData, index) => {
-        form.ingredients[index]=brewingItemData
+      form.ingredients[index] = brewingItemData;
     };
 
     const removeBrewingItemData = (index) => {
@@ -89,7 +109,18 @@ export default {
     };
 
     const onSubmit = () => {
-      console.log(form);
+      emit("submitBrewEvent", {
+        id: form.id,
+        name: form.name,
+        desc: form.desc,
+        from: form.from,
+        to: form.to,
+        ingredients: form.ingredients,
+      });
+    };
+
+    const onCancel = () => {
+        emit("clickCancel");
     };
 
     const itemMsts = [
@@ -150,6 +181,7 @@ export default {
       updateBrewingItemData,
       removeBrewingItemData,
       onSubmit,
+      onCancel,
       itemMsts,
     };
   },
