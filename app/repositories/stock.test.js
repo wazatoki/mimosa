@@ -75,13 +75,11 @@ test("stockLogs insert", async () => {
             operated_at: new Date(),
             operated_by: "test_staff_id_" + i,
             name: "test_name_" + i,
-            conversion_factor: i
         };
 
         let su = new StockUnit();
         su.id = params.id;
         su.name = params.name;
-        su.conversionFactor = params.conversion_factor;
         suArray.push(su);
 
         await d.none('insert into stock_units(${this:name}) values(${this:csv})', params);
@@ -98,8 +96,11 @@ test("stockLogs insert", async () => {
             operated_by: "test_staff_id_" + i,
             name: "test_name_" + i,
             receiving_unit_id: suArray[(i + 3) % 5].id,
-            shipping_unit_id: suArray[(i + 2) % 5].id,
+            receiving_conversion_factor: 10,
+            brewing_unit_id: suArray[(i + 2) % 5].id,
+            brewing_conversion_factor: 100,
             stock_unit_id: suArray[(i + 7) % 5].id,
+            stock_conversion_factor: 1000,
             base_unit_id: suArray[(i + 5) % 5].id
         };
 
@@ -120,18 +121,18 @@ test("stockLogs insert", async () => {
     stockLogEntity.actDate = new Date(2020, 1, 1);
     stockLogEntity.item = siArray[1];
     stockLogEntity.receivingQuantity = 10.45;
-    stockLogEntity.shippingQuantity = 0;
+    stockLogEntity.brewingQuantity = 0;
     stockLogEntity.description = 'sample_comment_1';
     stockLogEntity.recipe = reArray[1];
     stockLogEntity.stockReceive = srArray[1];
 
     const id = await stockRepo.insert(stockLogEntity, "test_staff_id_1");
-    const result = await d.one('select act_date, item_id, receiving_quantity, shipping_quantity, description from stock_logs where id=$1', id);
+    const result = await d.one('select act_date, item_id, receiving_quantity, brewing_quantity, description from stock_logs where id=$1', id);
 
     expect(stockLogEntity.actDate).toEqual(result.act_date);
     expect(stockLogEntity.item.id).toBe(result.item_id);
     expect(stockLogEntity.receivingQuantity).toBe(Number(result.receiving_quantity));
-    expect(stockLogEntity.shippingQuantity).toBe(Number(result.shipping_quantity));
+    expect(stockLogEntity.brewingQuantity).toBe(Number(result.brewing_quantity));
     expect(stockLogEntity.description).toBe(result.description);
 
 });
@@ -191,13 +192,11 @@ test("stockLogs update", async () => {
             operated_at: new Date(),
             operated_by: "test_staff_id_" + i,
             name: "test_name_" + i,
-            conversion_factor: i
         };
 
         let su = new StockUnit();
         su.id = params.id;
         su.name = params.name;
-        su.conversionFactor = params.conversion_factor;
         suArray.push(su);
 
         await d.none('insert into stock_units(${this:name}) values(${this:csv})', params);
@@ -214,8 +213,11 @@ test("stockLogs update", async () => {
             operated_by: "test_staff_id_" + i,
             name: "test_name_" + i,
             receiving_unit_id: suArray[(i + 3) % 5].id,
-            shipping_unit_id: suArray[(i + 2) % 5].id,
+            receiving_conversion_factor: 10,
+            brewing_unit_id: suArray[(i + 2) % 5].id,
+            brewing_conversion_factor: 100,
             stock_unit_id: suArray[(i + 7) % 5].id,
+            stock_conversion_factor: 1000,
             base_unit_id: suArray[(i + 5) % 5].id
         };
 
@@ -243,7 +245,7 @@ test("stockLogs update", async () => {
         act_date: new Date(2020, 1, 1),
         item_id: siArray[1].id,
         receiving_quantity: 10.45,
-        shipping_quantity: 50.5,
+        brewing_quantity: 50.5,
         description: 'sample_comment_1',
         recipe_id: reArray[1].id,
         stock_receive_id: srArray[1].id
@@ -255,18 +257,18 @@ test("stockLogs update", async () => {
     stockLogEntity.actDate = new Date(2020, 4, 10);
     stockLogEntity.item = suArray[1];
     stockLogEntity.receivingQuantity = 20.15;
-    stockLogEntity.shippingQuantity = 30.35;
+    stockLogEntity.brewingQuantity = 30.35;
     stockLogEntity.description = 'sample_comment_1_1';
     stockLogEntity.recipe = reArray[1];
     stockLogEntity.stockReceive = srArray[1];
 
     await stockRepo.update(stockLogEntity, "test_staff_id_2");
-    const result = await d.one('select act_date, item_id, receiving_quantity, shipping_quantity, description from stock_logs where id=$1', id);
+    const result = await d.one('select act_date, item_id, receiving_quantity, brewing_quantity, description from stock_logs where id=$1', id);
 
     expect(stockLogEntity.actDate).toEqual(result.act_date);
     expect(stockLogEntity.item.id).toBe(result.item_id);
     expect(stockLogEntity.receivingQuantity).toBe(Number(result.receiving_quantity));
-    expect(stockLogEntity.shippingQuantity).toBe(Number(result.shipping_quantity));
+    expect(stockLogEntity.brewingQuantity).toBe(Number(result.brewing_quantity));
     expect(stockLogEntity.description).toBe(result.description);
 });
 
@@ -283,7 +285,7 @@ test("stockLogs remove", async () => {
         act_date: new Date(2020, 1, 1),
         item_id: createUUID(),
         receiving_quantity: 10.45,
-        shipping_quantity: 50.5,
+        brewing_quantity: 50.5,
         description: 'sample_comment_1'
     };
 
@@ -328,13 +330,11 @@ test("stock selectAll", async () => {
             operated_at: new Date(),
             operated_by: "test_staff_id_" + i,
             name: "test_name_" + i,
-            conversion_factor: i
         };
 
         let su = new StockUnit();
         su.id = params.id;
         su.name = params.name;
-        su.conversionFactor = params.conversion_factor;
         suArray.push(su);
 
         await d.none('insert into stock_units(${this:name}) values(${this:csv})', params);
@@ -373,8 +373,11 @@ test("stock selectAll", async () => {
             operated_by: "test_staff_id_" + i,
             name: "test_name_" + i,
             receiving_unit_id: suArray[(i + 3) % 5].id,
-            shipping_unit_id: suArray[(i + 2) % 5].id,
+            receiving_conversion_factor: 10,
+            brewing_unit_id: suArray[(i + 2) % 5].id,
+            brewing_conversion_factor: 100,
             stock_unit_id: suArray[(i + 7) % 5].id,
+            stock_conversion_factor:1000,
             base_unit_id: suArray[(i + 5) % 5].id
         };
 
@@ -382,8 +385,11 @@ test("stock selectAll", async () => {
         si.id = params.id;
         si.name = params.name;
         si.receivingUnit = suArray[(i + 3) % 5]
+        si.receivingUnitConversionFactor = 10;
         si.brewingUnit = suArray[(i + 2) % 5]
+        si.brewingUnitConversionFactor = 100;
         si.stockUnit = suArray[(i + 7) % 5]
+        si.stockUnitConversionFactor = 1000;
         si.baseUnit = suArray[(i + 5) % 5]
         siArray.push(si);
 
@@ -402,7 +408,7 @@ test("stock selectAll", async () => {
             act_date: new Date(2020, 1, 1),
             item_id: siArray[(i + 7) % 8].id,
             receiving_quantity: (i + 1) * 1.45,
-            shipping_quantity: (i + 1) * 2.75,
+            brewing_quantity: (i + 1) * 2.75,
             description: 'sample_comment_' + i,
             type: 0,
             recipe_id: reArray[1].id,
@@ -414,7 +420,7 @@ test("stock selectAll", async () => {
         s.actDate = params.act_date;
         s.item = siArray[(i + 7) % 8];
         s.receivingQuantity = params.receiving_quantity;
-        s.shippingQuantity = params.shipping_quantity;
+        s.brewingQuantity = params.brewing_quantity;
         s.description = params.description;
         s.recipe = reArray[1];
         s.stockReceive = srArray[1];

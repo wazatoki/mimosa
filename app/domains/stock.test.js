@@ -27,10 +27,10 @@ test("StockLog receivingSum", () => {
     expect(result).toBe(40);
 });
 
-test("StockLog shippingSum", () => {
+test("StockLog brewingSum", () => {
     const logs = createStockLogs()
     const sl = new StockLog(logs);
-    const result = sl.shippingSum(logs[0].item, new Date(2020, 1, 1), new Date(2020, 1, 31))
+    const result = sl.brewingSum(logs[0].item, new Date(2020, 1, 1), new Date(2020, 1, 31))
     expect(result).toBe(2);
 });
 
@@ -81,7 +81,7 @@ function createStockLogs() {
         actDate: new Date(2020, 1, 1),
         item: siArray[0],
         receivingQuantity: 10,
-        shippingQuantity: 0,
+        brewingQuantity: 0,
         description: 'sample_comment_1',
         type: 0
     }, {
@@ -89,7 +89,7 @@ function createStockLogs() {
         actDate: new Date(2020, 1, 3),
         item: siArray[0],
         receivingQuantity: 10,
-        shippingQuantity: 0,
+        brewingQuantity: 0,
         description: 'sample_comment_2',
         type: 0
     }, {
@@ -97,7 +97,7 @@ function createStockLogs() {
         actDate: new Date(2020, 1, 1),
         item: siArray[0],
         receivingQuantity: 0,
-        shippingQuantity: 1,
+        brewingQuantity: 1,
         description: 'sample_comment_2',
         type: 1
     }, {
@@ -105,7 +105,7 @@ function createStockLogs() {
         actDate: new Date(2020, 1, 2),
         item: siArray[0],
         receivingQuantity: 10,
-        shippingQuantity: 0,
+        brewingQuantity: 0,
         description: 'sample_comment_2',
         type: 0
     }, {
@@ -113,7 +113,7 @@ function createStockLogs() {
         actDate: new Date(2020, 1, 2),
         item: siArray[0],
         receivingQuantity: 0,
-        shippingQuantity: 1,
+        brewingQuantity: 1,
         description: 'sample_comment_2',
         type: 1
     }, {
@@ -121,7 +121,7 @@ function createStockLogs() {
         actDate: new Date(2020, 1, 2),
         item: siArray[0],
         receivingQuantity: 10,
-        shippingQuantity: 0,
+        brewingQuantity: 0,
         description: 'sample_comment_2',
         type: 0
     }, {
@@ -129,7 +129,7 @@ function createStockLogs() {
         actDate: new Date(2020, 1, 3),
         item: siArray[1],
         receivingQuantity: 10,
-        shippingQuantity: 0,
+        brewingQuantity: 0,
         description: 'sample_comment_3',
         type: 0
     }, {
@@ -137,7 +137,7 @@ function createStockLogs() {
         actDate: new Date(2020, 1, 4),
         item: siArray[2],
         receivingQuantity: 10,
-        shippingQuantity: 0,
+        brewingQuantity: 0,
         description: 'sample_comment_3',
         type: 0
     }];

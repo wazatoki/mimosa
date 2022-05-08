@@ -21,9 +21,9 @@ export class StockLogEntity {
     actDate
     item
     receivingQuantity
-    shippingQuantity
+    brewingQuantity
     description
-    type // 0: recieving, 1: shipping
+    type // 0: recieving, 1: brewing
     stockReceive
     recipe
 
@@ -32,7 +32,7 @@ export class StockLogEntity {
         this.actDate = new Date("1970", "1", "1")
         this.item = new StockItem()
         this.receivingQuantity = 0
-        this.shippingQuantity = 0
+        this.brewingQuantity = 0
         this.description = ""
         this.type = 0
         this.stockReceive = new StockRecieve();
@@ -71,15 +71,15 @@ export class StockLog {
                 return sum + element.receivingQuantity;
             }, 0);
 
-        const shipping = this.stockLogs
+        const brewing = this.stockLogs
             .filter(logEntity => (logEntity.item.name === inventory.item.name && logEntity.actDate > inventory.actDate && logEntity.actDate <= toDate))
             .reduce(function (sum, element) {
-                return sum + element.shippingQuantity;
+                return sum + element.brewingQuantity;
             }, 0);
 
         const result = (inventory.quantity * inventory.item.stockUnit.conversionFactor
             + receiving * inventory.item.receivingUnit.conversionFactor
-            - shipping * inventory.item.brewingUnit.conversionFactor) / inventory.item.stockUnit.conversionFactor
+            - brewing * inventory.item.brewingUnit.conversionFactor) / inventory.item.stockUnit.conversionFactor
 
         return result;
     }
@@ -94,11 +94,11 @@ export class StockLog {
         return result;
     }
 
-    shippingSum(item, fromDate, toDate) {
+    brewingSum(item, fromDate, toDate) {
 
         const result = this.stockLogs.filter(logEntity => (logEntity.item.name === item.name && logEntity.actDate >= fromDate && logEntity.actDate <= toDate))
             .reduce(function (sum, element) {
-                return sum + element.shippingQuantity;
+                return sum + element.brewingQuantity;
             }, 0);
 
         return result;

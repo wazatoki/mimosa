@@ -19,7 +19,7 @@ export class StockRepo {
             act_date: stockLogEntity.actDate,
             item_id: stockLogEntity.item.id,
             receiving_quantity: stockLogEntity.receivingQuantity,
-            shipping_quantity: stockLogEntity.shippingQuantity,
+            brewing_quantity: stockLogEntity.brewingQuantity,
             description: stockLogEntity.description,
             type: stockLogEntity.type,
             stock_receive_id: stockLogEntity.stockReceive.id,
@@ -40,7 +40,7 @@ export class StockRepo {
             act_date: stockLogEntity.actDate,
             item_id: stockLogEntity.item.id,
             receiving_quantity: stockLogEntity.receivingQuantity,
-            shipping_quantity: stockLogEntity.shippingQuantity,
+            brewing_quantity: stockLogEntity.brewingQuantity,
             description: stockLogEntity.description,
             type: stockLogEntity.type,
             stock_receive_id: stockLogEntity.stockReceive.id,
@@ -49,7 +49,7 @@ export class StockRepo {
     
         await this.dbBase.none('update stock_logs '
             + 'set operated_at=$(operated_at), operated_by=$(operated_by), act_date=$(act_date), item_id=$(item_id),'
-            + 'receiving_quantity=$(receiving_quantity), shipping_quantity=$(shipping_quantity), description=$(description),'
+            + 'receiving_quantity=$(receiving_quantity), brewing_quantity=$(brewing_quantity), description=$(description),'
             + 'type=${type}'
             + 'where id=$(id)', params);
     }
@@ -96,7 +96,7 @@ export class StockRepo {
     async selectAll(){
 
         const result = await this.dbBase.manyOrNone('select '
-            + 'id, act_date, item_id, receiving_quantity, shipping_quantity, description, type, recipe_id, stock_receive_id '
+            + 'id, act_date, item_id, receiving_quantity, brewing_quantity, description, type, recipe_id, stock_receive_id '
             + 'from stock_logs where del=false '
             + 'order by created_at');
         const stockItem = new StockItemRepo(this.dbBase);
@@ -112,7 +112,7 @@ export class StockRepo {
             s.actDate = data.act_date;
             s.item = items.find( item => data.item_id === item.id);
             s.receivingQuantity = Number(data.receiving_quantity);
-            s.shippingQuantity = Number(data.shipping_quantity);
+            s.brewingQuantity = Number(data.brewing_quantity);
             s.description = data.description;
             s.type = Number(data.type);
             s.stockReceive = stockRecieveList.find( item => data.stock_receive_id === item.id);

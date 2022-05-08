@@ -24,8 +24,11 @@ exports.up = function(db) {
     operated_by: 'string',
     name: 'string',
     receiving_unit_id: 'string',
-    shipping_unit_id: 'string',
+    receiving_conversion_factor: 'real',
+    brewing_unit_id: 'string',
+    brewing_conversion_factor: 'real',
     stock_unit_id: 'string',
+    stock_conversion_factor: 'real',
     base_unit_id: 'string'
   });
 };

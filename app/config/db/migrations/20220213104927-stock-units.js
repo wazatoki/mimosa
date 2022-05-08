@@ -22,8 +22,7 @@ exports.up = function(db) {
     created_by: 'string',
     operated_at: 'timestamp',
     operated_by: 'string',
-    name: 'string',
-    conversion_factor: 'real'
+    name: 'string'
   });
 };
 

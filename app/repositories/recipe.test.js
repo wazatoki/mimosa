@@ -36,7 +36,7 @@ test("recipe insert", async () => {
     stockLogEntity.actDate = new Date(2020, 1, 1);
     stockLogEntity.item = si;
     stockLogEntity.receivingQuantity = 0;
-    stockLogEntity.shippingQuantity = 50.5;
+    stockLogEntity.brewingQuantity = 50.5;
     stockLogEntity.description = 'sample_comment_1';
     stockLogEntity.type = 1;
     
@@ -85,7 +85,7 @@ test("recipe update", async () => {
             act_date: new Date(2020, 1, i),
             item_id: createUUID(),
             receiving_quantity: 10.45,
-            shipping_quantity: 50.5,
+            brewing_quantity: 50.5,
             description: 'sample_comment_'+i,
             recipe_id: id
         };
@@ -155,7 +155,7 @@ test("recipe remove", async () => {
             act_date: new Date(2020, 1, i),
             item_id: createUUID(),
             receiving_quantity: 10.45,
-            shipping_quantity: 50.5,
+            brewing_quantity: 50.5,
             description: 'sample_comment_'+i,
             recipe_id: id
         };

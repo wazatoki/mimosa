@@ -4,7 +4,8 @@
       <router-link to="/">brewery support</router-link> |
       <router-link to="/about">About</router-link>|
       <router-link to="/brewing-record">醸造記録</router-link>|
-      <router-link to="/stocks/recieving">入荷</router-link>
+      <router-link to="/stocks/recieving">入荷</router-link>|
+      <router-link to="/master">各種マスタ</router-link>
     </div>
     <router-view></router-view>
   </div>

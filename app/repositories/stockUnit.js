@@ -13,8 +13,7 @@ export class StockUnitRepo {
             created_by: opeStaffID,
             operated_at: new Date(),
             operated_by: opeStaffID,
-            name: stockUnit.name,
-            conversion_factor: stockUnit.conversionFactor
+            name: stockUnit.name
         };
     
         await this.dbBase.none('insert into stock_units(${this:name}) values(${this:csv})', params);
@@ -28,12 +27,11 @@ export class StockUnitRepo {
             id: stockUnit.id,
             operated_at: new Date(),
             operated_by: opeStaffID,
-            name: stockUnit.name,
-            conversion_factor: stockUnit.conversionFactor
+            name: stockUnit.name
         };
     
         await this.dbBase.none('update stock_units '
-            + 'set operated_at=$(operated_at), operated_by=$(operated_by), name=$(name), conversion_factor=$(conversion_factor) '
+            + 'set operated_at=$(operated_at), operated_by=$(operated_by), name=$(name) '
             + 'where id=$(id)', params);
     }
 
@@ -51,12 +49,11 @@ export class StockUnitRepo {
     }
 
     async selectAll() {
-        const result = await this.dbBase.manyOrNone('select id, name, conversion_factor from stock_units where del=false order by created_at');
+        const result = await this.dbBase.manyOrNone('select id, name from stock_units where del=false order by created_at');
         return result.map(data => {
             const su = new StockUnit();
             su.id = data.id;
             su.name = data.name;
-            su.conversionFactor = Number(data.conversion_factor);
             return su;
         });
     }

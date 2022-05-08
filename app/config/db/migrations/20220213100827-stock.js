@@ -25,9 +25,9 @@ exports.up = function(db) {
     act_date: 'date',
     item_id: 'string',
     receiving_quantity: 'decimal',
-    shipping_quantity: 'decimal',
+    brewing_quantity: 'decimal',
     description: 'string',
-    type: 'int', // 0: recieving, 1: shipping
+    type: 'int', // 0: recieving, 1: brewing
     recipe_id: 'string',
     stock_receive_id: 'string'
   });

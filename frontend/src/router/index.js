@@ -26,6 +26,11 @@ const routes = [
     path: '/stocks/recieving',
     name: 'StockRecieving',
     component: StockRecieving
+  },
+  {
+    path: '/master',
+    name: 'Master',
+    component: () => import('../views/MasterIndex.vue')
   }
 ]
 
