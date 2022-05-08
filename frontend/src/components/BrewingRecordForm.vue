@@ -99,7 +99,8 @@ export default {
         props.brewEvent.desc,
         props.brewEvent.from,
         props.brewEvent.to,
-        props.brewEvent.ingredients
+        props.brewEvent.ingredients,
+        props.brewEvent.batchNumber
       )
     );
     const formLabelWidth = "140px";
@@ -111,6 +112,7 @@ export default {
       form.from = n.from;
       form.to = n.to;
       form.ingredients = n.ingredients;
+      form.batchNumber = n.batchNumber;
     });
 
     const addIngredient = () => {
@@ -126,14 +128,18 @@ export default {
     };
 
     const onSubmit = () => {
-      emit("submitBrewEvent", {
-        id: form.id,
-        name: form.name,
-        desc: form.desc,
-        from: form.from,
-        to: form.to,
-        ingredients: form.ingredients,
-      });
+      emit(
+        "submitBrewEvent",
+        new BrewEvent(
+          form.id,
+          form.name,
+          form.desc,
+          form.from,
+          form.to,
+          form.ingredients,
+          form.batchNumber
+        )
+      );
     };
 
     const onCancel = () => {

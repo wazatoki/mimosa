@@ -7,13 +7,15 @@ export class BrewEvent {
   from; // datetime
   to; // datetime
   ingredients; // array
+  batchNumber; // Number
 
-  constructor(id, name, desc, from, to, ingredients) {
+  constructor(id, name, desc, from, to, ingredients, batchNumber) {
       this.id = id || createUUID();
       this.name = name || '';
       this.desc = desc || '';
       this.from = from || new Date();
       this.to = to || new Date();
       this.ingredients = ingredients || [];
+      this.batchNumber = batchNumber || 0;
   }
 }

@@ -25,6 +25,25 @@
                 </el-form-item>
               </el-col>
             </el-row>
+            <el-row>
+              <el-col :span="12">
+                <el-form-item
+                  label="batch name"
+                  :label-width="formLabelWidth"
+                  prop="batchName"
+                  :rules="[
+                    { required: true, message: 'batch name is required' },
+                  ]"
+                >
+                  <el-input
+                    v-model="batch.batchName"
+                    type="text"
+                    autocomplete="off"
+                    @blur="batchformVallidate(batchformRef)"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-form>
         </div>
       </el-col>
@@ -67,6 +86,7 @@ export default {
     const formLabelWidth = "140px";
     const batch = reactive({
       batchNumber: "",
+      batchName: "",
     });
     const batchformRef = ref();
     function batchformVallidate(formEl, callback) {
@@ -115,6 +135,7 @@ export default {
         a_brewEvent.desc = "";
         a_brewEvent.from = info.start;
         a_brewEvent.to = info.end;
+        a_brewEvent.batchNumber = batch.batchNumber;
         dialogVisible.value = true;
       });
     }
@@ -129,6 +150,7 @@ export default {
         a_brewEvent.desc = brewEvent.desc;
         a_brewEvent.from = brewEvent.from;
         a_brewEvent.to = brewEvent.to;
+        a_brewEvent.batchNumber = brewEvent.batchNumber;
         dialogVisible.value = true;
       }
     }
