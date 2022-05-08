@@ -3,8 +3,33 @@
     <el-row>
       <el-col :span="12">
         <div>brew plan</div>
+        <div>
+          <el-form ref="batchformRef" :model="batch">
+            <el-row>
+              <el-col :span="12">
+                <el-form-item
+                  label="batch number"
+                  :label-width="formLabelWidth"
+                  prop="batchNumber"
+                  :rules="[
+                    { required: true, message: 'batch number is required' },
+                    { type: 'number', message: 'batch number must be a number' },
+                  ]"
+                >
+                  <el-input
+                    v-model.number="batch.batchNumber"
+                    type="text"
+                    autocomplete="off"
+                    @blur="batchformVallidate(batchformRef)"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </div>
       </el-col>
       <el-col :span="12">
+        <div>brew event</div>
         <div>
           <FullCalendar :options="calendarOptions" />
         </div>
@@ -39,6 +64,26 @@ export default {
     BrewingRecordForm,
   },
   setup() {
+    const formLabelWidth = "140px";
+    const batch = reactive({
+      batchNumber: "",
+    });
+    const batchformRef = ref();
+    function batchformVallidate(formEl, callback) {
+      if (!formEl) return;
+      formEl.validate((valid) => {
+        if (valid) {
+          if (callback) {
+            callback();
+          }
+          console.log("form vallidate true");
+        } else {
+          console.log("form vallidate false");
+          return false;
+        }
+      });
+    }
+
     const calendarOptions = reactive({
       plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
       initialView: "timeGridWeek",
@@ -51,10 +96,10 @@ export default {
         onClickCalenderEvent(info);
       },
       eventDrop: function (info) {
-        onChangeCalendarEvent(info)
+        onChangeCalendarEvent(info);
       },
       eventResize: function (info) {
-        onChangeCalendarEvent(info)
+        onChangeCalendarEvent(info);
       },
       events: [],
     });
@@ -64,16 +109,20 @@ export default {
     const a_brewEvent = reactive(new BrewEvent());
 
     function onSelectCalender(info) {
-      a_brewEvent.id = createUUID();
-      a_brewEvent.name = "";
-      a_brewEvent.desc = "";
-      a_brewEvent.from = info.start;
-      a_brewEvent.to = info.end;
-      dialogVisible.value = true;
+      batchformVallidate(batchformRef.value, () => {
+        a_brewEvent.id = createUUID();
+        a_brewEvent.name = "";
+        a_brewEvent.desc = "";
+        a_brewEvent.from = info.start;
+        a_brewEvent.to = info.end;
+        dialogVisible.value = true;
+      });
     }
 
     function onClickCalenderEvent(info) {
-      const brewEvent = brewEvents.find((calenderEvent) => calenderEvent.id === info.event.id);
+      const brewEvent = brewEvents.find(
+        (calenderEvent) => calenderEvent.id === info.event.id
+      );
       if (brewEvent) {
         a_brewEvent.id = brewEvent.id;
         a_brewEvent.name = brewEvent.name;
@@ -110,18 +159,16 @@ export default {
     }
 
     function onChangeCalendarEvent(info) {
-      const be = brewEvents.find(brewEvent => brewEvent.id === info.event.id)
-        be.name = info.event.title;
-        be.from = info.event.start;
-        be.to = info.event.end;
+      const be = brewEvents.find((brewEvent) => brewEvent.id === info.event.id);
+      be.name = info.event.title;
+      be.from = info.event.start;
+      be.to = info.event.end;
     }
 
     function onClickBrewingRecordFormDelete(id) {
       dialogVisible.value = false;
       // calenderEvent削除処理
-      const ceIndex = calendarOptions.events.findIndex(
-        (e) => e.id === id
-      );
+      const ceIndex = calendarOptions.events.findIndex((e) => e.id === id);
       if (ceIndex >= 0) {
         calendarOptions.events.splice(ceIndex, 1);
       }
@@ -137,6 +184,10 @@ export default {
     }
 
     return {
+      batchformRef,
+      formLabelWidth,
+      batch,
+      batchformVallidate,
       calendarOptions,
       a_brewEvent,
       dialogVisible,
