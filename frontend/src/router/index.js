@@ -31,6 +31,11 @@ const routes = [
     path: '/master',
     name: 'Master',
     component: () => import('../views/MasterIndex.vue')
+  },
+  {
+    path: '/master/unit-mst',
+    name: 'UnitMaster',
+    component: () => import('../views/MasterUnit.vue')
   }
 ]
 

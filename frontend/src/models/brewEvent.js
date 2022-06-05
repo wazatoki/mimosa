@@ -1,4 +1,5 @@
 import { createUUID } from "@/utils/string";
+import { BrewPlan } from "@/models/brewPlan"
 
 export class BrewEvent {
   id; // string
@@ -7,15 +8,15 @@ export class BrewEvent {
   from; // datetime
   to; // datetime
   ingredients; // array
-  batchNumber; // Number
+  brewPlan; // BrewPlan
 
-  constructor(id, name, desc, from, to, ingredients, batchNumber) {
+  constructor(id, name, desc, from, to, ingredients, brewPlan) {
       this.id = id || createUUID();
       this.name = name || '';
       this.desc = desc || '';
       this.from = from || new Date();
       this.to = to || new Date();
       this.ingredients = ingredients || [];
-      this.batchNumber = batchNumber || 0;
+      this.brewPlan = brewPlan || new BrewPlan();
   }
 }

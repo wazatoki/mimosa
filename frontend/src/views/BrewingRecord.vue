@@ -4,7 +4,7 @@
       <el-col :span="12">
         <div>brew plan</div>
         <div>
-          <el-form ref="batchformRef" :model="batch">
+          <el-form ref="batchformRef" :model="brewPlan">
             <el-row>
               <el-col :span="12">
                 <el-form-item
@@ -17,7 +17,7 @@
                   ]"
                 >
                   <el-input
-                    v-model.number="batch.batchNumber"
+                    v-model.number="brewPlan.batchNumber"
                     type="text"
                     autocomplete="off"
                     @blur="batchformVallidate(batchformRef)"
@@ -36,7 +36,7 @@
                   ]"
                 >
                   <el-input
-                    v-model="batch.batchName"
+                    v-model="brewPlan.batchName"
                     type="text"
                     autocomplete="off"
                     @blur="batchformVallidate(batchformRef)"
@@ -73,6 +73,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import BrewingRecordForm from "@/components/BrewingRecordForm.vue";
 import { BrewEvent } from "@/models/brewEvent";
+import { BrewPlan } from "@/models/brewPlan"
 import { createUUID } from "@/utils/string";
 import { reactive, ref } from "vue";
 
@@ -84,10 +85,7 @@ export default {
   },
   setup() {
     const formLabelWidth = "140px";
-    const batch = reactive({
-      batchNumber: "",
-      batchName: "",
-    });
+    const brewPlan = reactive( new BrewPlan());
     const batchformRef = ref();
     function batchformVallidate(formEl, callback) {
       if (!formEl) return;
@@ -135,7 +133,7 @@ export default {
         a_brewEvent.desc = "";
         a_brewEvent.from = info.start;
         a_brewEvent.to = info.end;
-        a_brewEvent.batchNumber = batch.batchNumber;
+        a_brewEvent.brewPlan = brewPlan;
         dialogVisible.value = true;
       });
     }
@@ -150,7 +148,7 @@ export default {
         a_brewEvent.desc = brewEvent.desc;
         a_brewEvent.from = brewEvent.from;
         a_brewEvent.to = brewEvent.to;
-        a_brewEvent.batchNumber = brewEvent.batchNumber;
+        a_brewEvent.brewPlan = brewEvent.brewPlan;
         dialogVisible.value = true;
       }
     }
@@ -208,7 +206,7 @@ export default {
     return {
       batchformRef,
       formLabelWidth,
-      batch,
+      brewPlan,
       batchformVallidate,
       calendarOptions,
       a_brewEvent,

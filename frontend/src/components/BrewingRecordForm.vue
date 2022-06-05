@@ -2,6 +2,20 @@
   <el-form :model="form">
     <el-row>
       <el-col :span="24">
+        <el-form-item label="batch numbre" :label-width="formLabelWidth">
+          <el-input v-model="form.brewPlan.batchNumber" autocomplete="off" disabled/>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="24">
+        <el-form-item label="batch name" :label-width="formLabelWidth">
+          <el-input v-model="form.brewPlan.batchName" autocomplete="off" disabled/>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="24">
         <el-form-item label="event title" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off" />
         </el-form-item>
@@ -100,7 +114,7 @@ export default {
         props.brewEvent.from,
         props.brewEvent.to,
         props.brewEvent.ingredients,
-        props.brewEvent.batchNumber
+        props.brewEvent.brewPlan
       )
     );
     const formLabelWidth = "140px";
@@ -112,7 +126,7 @@ export default {
       form.from = n.from;
       form.to = n.to;
       form.ingredients = n.ingredients;
-      form.batchNumber = n.batchNumber;
+      form.brewPlan = n.brewPlan;
     });
 
     const addIngredient = () => {
@@ -137,7 +151,7 @@ export default {
           form.from,
           form.to,
           form.ingredients,
-          form.batchNumber
+          form.brewPlan
         )
       );
     };
