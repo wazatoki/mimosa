@@ -1,5 +1,4 @@
-import { createUUID } from "@/utils/string";
-import { BrewPlan } from "@/models/brewPlan"
+import { BrewPlan } from "@/models/brewPlan";
 
 export class BrewEvent {
   id; // string
@@ -11,7 +10,7 @@ export class BrewEvent {
   brewPlan; // BrewPlan
 
   constructor(id, name, desc, from, to, ingredients, brewPlan) {
-      this.id = id || createUUID();
+      this.id = id || '';
       this.name = name || '';
       this.desc = desc || '';
       this.from = from || new Date();

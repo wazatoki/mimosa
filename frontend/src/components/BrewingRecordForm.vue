@@ -86,7 +86,6 @@
 
 <script>
 import { reactive, watch } from "vue";
-import { createUUID } from "@/utils/string";
 import BrewingRecordItem from "@/components/BrewingRecordItem.vue";
 import { BrewEvent } from "@/models/brewEvent";
 
@@ -130,7 +129,7 @@ export default {
     });
 
     const addIngredient = () => {
-      form.ingredients.push({ id: createUUID(), item: itemMsts[0], quantity: 0 });
+      form.ingredients.push({ id: '', item: itemMsts[0], quantity: 0 });
     };
 
     const updateBrewingItemData = (brewingItemData, index) => {
