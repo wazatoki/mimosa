@@ -47,7 +47,6 @@ import Header from "@/components/Header.vue";
 import StockRecievingItem from "@/components/StockRecievingItem.vue";
 
 import { ref } from "vue";
-import { createUUID } from "@/utils/string"
 
 export default {
   name: "StockRecieving",
@@ -61,7 +60,7 @@ export default {
     const recievingDataArray = ref([]);
 
     const addRecievingData = () => {
-      recievingDataArray.value.push({id: createUUID(),item: itemMsts[0], quantity: 0});
+      recievingDataArray.value.push({id: '',item: itemMsts[0], quantity: 0});
     };
 
     const removerecievingData = (index) => {

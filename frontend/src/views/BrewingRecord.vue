@@ -54,13 +54,16 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog v-model="dialogVisible">
+    <el-dialog v-model="brewEventDialogVisible">
       <BrewingRecordForm
         :brewEvent="a_brewEvent"
         @submitBrewEvent="onSubmitBrewEvent($event)"
         @clickCancel="onClickBrewingRecordFormCancel"
         @clickDelete="onClickBrewingRecordFormDelete($event)"
       ></BrewingRecordForm>
+    </el-dialog>
+    <el-dialog v-model="brewPlanDialogVisible">
+      <BrewingRecordSelect></BrewingRecordSelect>
     </el-dialog>
   </div>
 </template>
@@ -72,9 +75,9 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import BrewingRecordForm from "@/components/BrewingRecordForm.vue";
+import BrewingRecordSelect from '../components/BrewingRecordSelect.vue';
 import { BrewEvent } from "@/models/brewEvent";
 import { BrewPlan } from "@/models/brewPlan"
-import { createUUID } from "@/utils/string";
 import { reactive, ref } from "vue";
 
 export default {
@@ -82,6 +85,7 @@ export default {
   components: {
     FullCalendar,
     BrewingRecordForm,
+    BrewingRecordSelect,
   },
   setup() {
     const formLabelWidth = "140px";
@@ -122,19 +126,20 @@ export default {
       events: [],
     });
 
-    const dialogVisible = ref(false);
+    const brewEventDialogVisible = ref(false);
+    const brewPlanDialogVisible = ref(true);
     const brewEvents = [];
     const a_brewEvent = reactive(new BrewEvent());
 
     function onSelectCalender(info) {
       batchformVallidate(batchformRef.value, () => {
-        a_brewEvent.id = createUUID();
+        a_brewEvent.id = "";
         a_brewEvent.name = "";
         a_brewEvent.desc = "";
         a_brewEvent.from = info.start;
         a_brewEvent.to = info.end;
         a_brewEvent.brewPlan = brewPlan;
-        dialogVisible.value = true;
+        brewEventDialogVisible.value = true;
       });
     }
 
@@ -149,12 +154,12 @@ export default {
         a_brewEvent.from = brewEvent.from;
         a_brewEvent.to = brewEvent.to;
         a_brewEvent.brewPlan = brewEvent.brewPlan;
-        dialogVisible.value = true;
+        brewEventDialogVisible.value = true;
       }
     }
 
     function onSubmitBrewEvent(submitedBrewEvent) {
-      dialogVisible.value = false;
+      brewEventDialogVisible.value = false;
       // calenderEvent更新処理
       const calenderEvent = {
         id: submitedBrewEvent.id,
@@ -186,7 +191,7 @@ export default {
     }
 
     function onClickBrewingRecordFormDelete(id) {
-      dialogVisible.value = false;
+      brewEventDialogVisible.value = false;
       // calenderEvent削除処理
       const ceIndex = calendarOptions.events.findIndex((e) => e.id === id);
       if (ceIndex >= 0) {
@@ -200,7 +205,7 @@ export default {
     }
 
     function onClickBrewingRecordFormCancel() {
-      dialogVisible.value = false;
+      brewEventDialogVisible.value = false;
     }
 
     return {
@@ -210,7 +215,8 @@ export default {
       batchformVallidate,
       calendarOptions,
       a_brewEvent,
-      dialogVisible,
+      brewEventDialogVisible,
+      brewPlanDialogVisible,
       onSubmitBrewEvent,
       onClickCalenderEvent,
       onChangeCalendarEvent,

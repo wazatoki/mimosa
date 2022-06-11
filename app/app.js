@@ -5,6 +5,7 @@ import logger from 'morgan';
 
 import indexRouter from './routes/index';
 import stocksRouter from './routes/stocks';
+import apiRouter from './routes/api';
 
 var app = express();
 
@@ -16,5 +17,6 @@ app.use(express.static(join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/stocks', stocksRouter);
+app.use('/api', apiRouter);
 
 export default app;
